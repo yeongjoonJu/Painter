@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -27,6 +28,7 @@ namespace Painter
         MouseEventHandler mouseMoveEvent;
         MouseButtonEventHandler startDrawEvent;
         Dictionary<String, SolidColorBrush> colorDict;
+        Point priorPoint;
 
         // 두께 설정 상수
         const int THIN = 2;
@@ -77,6 +79,8 @@ namespace Painter
         public void ReadyToDraw(object shape)
         {
             Mouse.OverrideCursor = Cursors.Cross;
+            if (shape.GetType().ToString().Equals("System.Windows.Shapes.Path"))
+                Mouse.OverrideCursor = Cursors.Pen;
             DrawingObject = shape;
             Canvas.MouseDown += startDrawEvent;
         }
@@ -84,6 +88,7 @@ namespace Painter
         public void StartDraw(object sender, MouseButtonEventArgs e)
         {
             Point point = GetCurrentPoint();
+            priorPoint = point;
             // 선 그리기
             if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Line")) {
                 Line line = (Line)DrawingObject;
@@ -92,6 +97,20 @@ namespace Painter
                 line.X2 = point.X;
                 line.Y2 = point.Y;
                 Canvas.Children.Add(line);
+            }
+            // 브러쉬로 그리기
+            else if(DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Path"))
+            {
+                Path brush = (Path)DrawingObject;
+                PathGeometry geometry = new PathGeometry();
+                PathFigureCollection figures = new PathFigureCollection();
+                PathFigure figure = new PathFigure();
+                figure.StartPoint = point;
+                figure.Segments = new PathSegmentCollection();
+                figures.Add(figure);
+                geometry.Figures = figures;
+                brush.Data = geometry;
+                Canvas.Children.Add(brush);
             }
             Canvas.MouseUp += mouseUpEvent;
             Canvas.MouseMove += mouseMoveEvent;
@@ -111,7 +130,6 @@ namespace Painter
         public void MoveMouse(object sender, MouseEventArgs e)
         {
             Point point = GetCurrentPoint();
-            
             /* 원래의 타입으로 변환*/
 
             // 선 그리기
@@ -122,6 +140,22 @@ namespace Painter
                 Canvas.Children.Remove(line);
                 Canvas.Children.Add(line);
             }
+            // 브러쉬로 그리기
+            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Path"))
+            {
+                Path brush = (Path)DrawingObject;
+                PathGeometry geometry = (PathGeometry)brush.Data;
+                PathFigureCollection figures = geometry.Figures;
+                PathFigure figure = figures[0];
+                PathSegmentCollection pathSegments = figure.Segments;
+                QuadraticBezierSegment quadratic = new QuadraticBezierSegment();
+                quadratic.Point1 = priorPoint;
+                quadratic.Point2 = point;
+                pathSegments.Add(quadratic);
+                Canvas.Children.Remove(brush);
+                Canvas.Children.Add(brush);
+            }
+            priorPoint = point;
         }
         
         public void DrawLine(object sender, RoutedEventArgs e)
@@ -130,6 +164,14 @@ namespace Painter
             ReadyToDraw(line);
             line.Stroke = foreGroundColor;
             line.StrokeThickness = thickness;
+        }
+
+        public void DrawBrush(object sender, RoutedEventArgs e)
+        {
+            Path brush = new Path();
+            ReadyToDraw(brush);
+            brush.Stroke = foreGroundColor;
+            brush.StrokeThickness = thickness;
         }
 
         // Drag정도에 따라 캔버스 크기 조정
