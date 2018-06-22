@@ -1,0 +1,15 @@
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\bin\Debug\Painter.exe.config
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\bin\Debug\Painter.exe
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\bin\Debug\Painter.pdb
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.csprojResolveAssemblyReference.cache
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\MainWindow.g.cs
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\App.g.cs
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter_MarkupCompile.cache
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter_MarkupCompile.lref
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\MainWindow.baml
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.g.resources
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.Properties.Resources.resources
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.csproj.GenerateResource.cache
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.csproj.CoreCompileInputs.cache
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.exe
+C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.pdb

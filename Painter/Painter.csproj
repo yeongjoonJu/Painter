@@ -93,5 +93,53 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\newfile.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\exit.jpg" />
+    <Resource Include="images\openfile.jpg" />
+    <Resource Include="images\savefile.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\paste.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\pastemenu.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\choiceButton.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\cropIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\resizeIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\rotateIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\brushIcon.png" />
+    <Resource Include="images\eraserIcon.png" />
+    <Resource Include="images\pensilIcon.png" />
+    <Resource Include="images\pipetteIcon.png" />
+    <Resource Include="images\textIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\grassIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\paintIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\circle.jpg" />
+    <Resource Include="images\cursor.png" />
+    <Resource Include="images\line.jpg" />
+    <Resource Include="images\square.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\thickness.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

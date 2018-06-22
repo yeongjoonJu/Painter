@@ -5,8 +5,280 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Painter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="768" Width="1200">
+
+   <Grid>
+      <Grid.RowDefinitions>
+         <RowDefinition Height="125"/>
+         <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      
+      <Grid Name="MenuBar" Grid.Row="0">
+         <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="100"/>
+         </Grid.RowDefinitions>
+         <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="55"/>
+               <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
+            <Menu Background="White" Grid.Column="0">
+               <MenuItem Header="  파일" Background="Blue" Foreground="White" Height="25" Width="55">
+                  <MenuItem Name="menu_newfile" Header="새로 만들기" Foreground="Black">
+                     <MenuItem.Icon>
+                        <Image Source="images/newfile.jpg"/>
+                     </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Name="menu_openfile" Header="열기" Foreground="Black">
+                     <MenuItem.Icon>
+                        <Image Source="images/openfile.jpg"/>
+                     </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Name="menu_savefile" Header="저장" Foreground="Black">
+                     <MenuItem.Icon>
+                        <Image Source="images/savefile.jpg"/>
+                     </MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Name="menu_exit" Header="끝내기" Foreground="Black">
+                     <MenuItem.Icon>
+                        <Image Source="images/exit.jpg"/>
+                     </MenuItem.Icon>
+                  </MenuItem>
+               </MenuItem>
+            </Menu>
+            <Label Grid.Column="1" Content="홈" Background="#F5F6F7" HorizontalContentAlignment="Center"/>
+         </Grid>
+         <Grid Grid.Row="1" Background="#F5F6F7">
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="130" />
+               <ColumnDefinition Width="120" />
+               <ColumnDefinition Width="100" />
+               <ColumnDefinition Width="60" />
+               <ColumnDefinition Width="180"/>
+               <ColumnDefinition Width="60" />
+               <ColumnDefinition Width="270" />
+               <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0"  BorderThickness="0,0,2,0" BorderBrush="#E8E9EA" >
+               <Grid Name="clipboard">
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="*"/>
+                     <RowDefinition Height="25"/>
+                  </Grid.RowDefinitions>
+                  <Grid Grid.Row="0">
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*" />
+                     </Grid.ColumnDefinitions>
+                     <Image Grid.Column="0" Source="images/paste.jpg"/>
+                     <Image Grid.Column="1" Source="images/pastemenu.jpg"/>
+                  </Grid>
+                  <Label Grid.Row="1" Content="클립보드" HorizontalContentAlignment="Center"/>
+               </Grid>
+            </Border>
+            <Border Grid.Column="1"  BorderThickness="0,0,2,0" BorderBrush="#E8E9EA" >
+               <Grid Name="image">
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="*"/>
+                     <RowDefinition Height="25"/>
+                  </Grid.RowDefinitions>
+                  <Grid Grid.Row="0">
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="*" />
+                     </Grid.ColumnDefinitions>
+                     <Button Grid.Column="0" Name="Btn_choice" BorderBrush="#E8E9EA">
+                        <Image Source="images/choiceButton.jpg"/>
+                     </Button>
+                     <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                           <RowDefinition Height="1*"/>
+                           <RowDefinition Height="1*"/>
+                           <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <Button Name="Btn_cut" Grid.Row="0" Background="#F5F6F7" HorizontalContentAlignment="Left" BorderBrush="#E8E9EA">
+                           <StackPanel Orientation="Horizontal">
+                              <Image Source="images/cropIcon.png"/>
+                              <Label Content="자르기" FontSize="9.5" VerticalAlignment="Center"/>
+                           </StackPanel>
+                        </Button>
+                        <Button Name="Btn_resize" Grid.Row="1" Background="#F5F6F7" HorizontalContentAlignment="Left" BorderBrush="#E8E9EA">
+                           <StackPanel Orientation="Horizontal">
+                              <Image Source="images/resizeIcon.png"/>
+                              <Label Content="크기 조정" FontSize="9.5" VerticalAlignment="Center"/>
+                           </StackPanel>
+                        </Button>
+                        <Button Name="Btn_rotate" Grid.Row="2" Background="#F5F6F7" HorizontalContentAlignment="Left" BorderBrush="#E8E9EA">
+                           <StackPanel Orientation="Horizontal">
+                              <Image Source="images/rotateIcon.png"/>
+                              <Label Content="우로 회전" FontSize="9.5" VerticalAlignment="Center"/>
+                           </StackPanel>
+                        </Button>
+                     </Grid>
+                  </Grid>
+                  <Label Grid.Row="1" Content="이미지" HorizontalContentAlignment="Center" />
+               </Grid>
+            </Border>
+            <Border Grid.Column="2"  BorderThickness="0,0,2,0" BorderBrush="#E8E9EA" >
+               <Grid Name="tool">
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="*"/>
+                     <RowDefinition Height="25"/>
+                  </Grid.RowDefinitions>
+                  <Grid Grid.Row="0">
+                     <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                     </Grid.RowDefinitions>
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                     </Grid.ColumnDefinitions>
+                     <Button Name="Btn_Pensil" Grid.Row="0" Grid.Column="0" Background="#F5F6F7" BorderBrush="#E8E9EA" >
+                        <Image Source="images/pensilIcon.png"/>
+                     </Button>
+                     <Button Name="Btn_Paint" Grid.Row="0" Grid.Column="1" Background="#F5F6F7" BorderBrush="#E8E9EA">
+                        <Image Source="images/paintIcon.png"/>
+                     </Button>
+                     <Button Name="Btn_Text" Grid.Row="0" Grid.Column="2" Background="#F5F6F7" BorderBrush="#E8E9EA">
+                        <Image Source="images/textIcon.png"/>
+                     </Button>
+                     <Button Name="Btn_Eraser" Grid.Row="1" Grid.Column="0" Background="#F5F6F7" BorderBrush="#E8E9EA">
+                        <Image Source="images/eraserIcon.png"/>
+                     </Button>
+                     <Button Name="Btn_Pipette" Grid.Row="1" Grid.Column="1" Background="#F5F6F7" BorderBrush="#E8E9EA">
+                        <Image Source="images/pipetteIcon.png"/>
+                     </Button>
+                     <Button Name="Btn_Grass" Grid.Row="1" Grid.Column="2" Background="#F5F6F7" BorderBrush="#E8E9EA">
+                        <Image Source="images/grassIcon.png"/>
+                     </Button>
+                  </Grid>
+                  <Label Grid.Row="1" Content="도구" HorizontalContentAlignment="Center" />
+               </Grid>
+            </Border>
+            <Border Grid.Column="3"  BorderThickness="0,0,2,0" BorderBrush="#E8E9EA" >
+               <Grid>
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="*"/>
+                     <RowDefinition Height="25"/>
+                  </Grid.RowDefinitions>
+                  <Button Name="Btn_Brush" Grid.Row="0" Background="White" BorderBrush="#E8E9EA">
+                     <Image Source="images/brushIcon.png"/>
+                  </Button>
+                  <Label Grid.Row="1" Content="브러쉬" HorizontalContentAlignment="Center"/>
+               </Grid>
+            </Border>
+            <Border Grid.Column="4"  BorderThickness="0,0,2,0" BorderBrush="#E8E9EA" >
+               <Grid Name="shape">
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="*"/>
+                     <RowDefinition Height="25"/>
+                  </Grid.RowDefinitions>
+                  <Grid Grid.Row="0">
+                     <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                     </Grid.RowDefinitions>
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                     </Grid.ColumnDefinitions>
+                     <Button Name="Btn_Cursor" Grid.Row="0" Grid.Column="0" Background="White" BorderBrush="#E8E9EA">
+                        <Image Source="images/cursor.png"/>
+                     </Button>
+                     <Button Name="Btn_Line" Grid.Row="0" Grid.Column="1" Background="White" BorderBrush="#E8E9EA">
+                        <Image Source="images/line.jpg"/>
+                     </Button>
+                     <Button Name="Btn_Circle" Grid.Row="0" Grid.Column="2" Background="White" BorderBrush="#E8E9EA">
+                        <Image Source="images/circle.jpg"/>
+                     </Button>
+                     <Button Name="Btn_Square" Grid.Row="1" Grid.Column="0" Background="White" BorderBrush="#E8E9EA">
+                        <Image Source="images/square.jpg"/>
+                     </Button>
+                  </Grid>
+                  <Label Grid.Row="1" Content="도형" HorizontalContentAlignment="Center" />
+               </Grid>
+            </Border>
+            <Border Grid.Column="5"  BorderThickness="0,0,2,0" BorderBrush="#E8E9EA" >
+               <Grid>
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="*"/>
+                     <RowDefinition Height="25"/>
+                  </Grid.RowDefinitions>
+                  <Button Grid.Row="0" Name="Btn_Thickness" Background="#F5F6F7" BorderBrush="#E8E9EA">
+                     <Image Source="images/thickness.png"/>
+                  </Button>
+                  <Label Grid.Row="1" Content="두께" HorizontalContentAlignment="Center"/>
+               </Grid>
+            </Border>
+            <Border Grid.Column="6"  BorderThickness="0,0,2,0" BorderBrush="#E8E9EA" >
+               <Grid>
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="*"/>
+                     <RowDefinition Height="25"/>
+                  </Grid.RowDefinitions>
+                  <Grid Grid.Row="0">
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="45"/>
+                        <ColumnDefinition Width="*" />
+                     </Grid.ColumnDefinitions>
+                     <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                           <RowDefinition Height="*"/>
+                           <RowDefinition Height="25"/>
+                        </Grid.RowDefinitions>
+                        <Label Name="foreColor" Background="Black" Grid.Row ="0" Margin="3" />
+                        <Label Content="색1" Grid.Row ="1" HorizontalContentAlignment="Center" />
+                     </Grid>
+                     <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                           <RowDefinition Height="*"/>
+                           <RowDefinition Height="25"/>
+                        </Grid.RowDefinitions>
+                        <Label Name="backColor" Background="White" Grid.Row="0" Margin="3"/>
+                        <Label Content="색2" Grid.Row="1" HorizontalContentAlignment="Center"/>
+                     </Grid>
+                     <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                           <RowDefinition/>
+                           <RowDefinition/>
+                           <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                           <ColumnDefinition/>
+                           <ColumnDefinition/>
+                           <ColumnDefinition/>
+                           <ColumnDefinition/>
+                           <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Name="Btn_Black" Grid.Row="0" Grid.Column="0" Background="Black" BorderBrush="White"/>
+                        <Button Name="Btn_White" Grid.Row="0" Grid.Column="1" Background="White" BorderBrush="White"/>
+                        <Button Name="Btn_Red" Grid.Row="0" Grid.Column="2" Background="Red" BorderBrush="White"/>
+                        <Button Name="Btn_Orange" Grid.Row="0" Grid.Column="3" Background="Orange" BorderBrush="White"/>
+                        <Button Name="Btn_Yellow" Grid.Row="0" Grid.Column="4" Background="Yellow" BorderBrush="White"/>
+                        <Button Name="Btn_Gray" Grid.Row="1" Grid.Column="0" Background="Gray" BorderBrush="White"/>
+                        <Button Name="Btn_DimGray" Grid.Row="1" Grid.Column="1" Background="DimGray" BorderBrush="White"/>
+                        <Button Name="Btn_Pink" Grid.Row="1" Grid.Column="2" Background="Pink" BorderBrush="White"/>
+                        <Button Name="Btn_Beige" Grid.Row="1" Grid.Column="3" Background="Beige" BorderBrush="White"/>
+                        <Button Name="Btn_Green" Grid.Row="1" Grid.Column="4" Background="Green" BorderBrush="White"/>
+                        <Button Name="Btn_GreenYellow" Grid.Row="2" Grid.Column="0" Background="GreenYellow" BorderBrush="White"/>
+                        <Button Name="Btn_SkyBlue" Grid.Row="2" Grid.Column="1" Background="SkyBlue" BorderBrush="White"/>
+                        <Button Name="Btn_LightCoral" Grid.Row="2" Grid.Column="2" Background="LightCoral" BorderBrush="White"/>
+                        <Button Name="Btn_HotPink" Grid.Row="2" Grid.Column="3" Background="HotPink" BorderBrush="White"/>
+                        <Button Name="Btn_Brown" Grid.Row="2" Grid.Column="4" Background="Brown" BorderBrush="White"/>
+                     </Grid>
+                  </Grid>
+                  <Label Grid.Row="1" Content="색" HorizontalContentAlignment="Center"/>
+               </Grid>
+            </Border>
+         </Grid>
+      </Grid>
+      <Grid Name="Canvas" Grid.Row="1" Background="#CAD4E3" >
+         
+      </Grid>
+   </Grid>
 </Window>
