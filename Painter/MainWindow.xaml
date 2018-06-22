@@ -58,6 +58,7 @@
                <ColumnDefinition Width="180"/>
                <ColumnDefinition Width="60" />
                <ColumnDefinition Width="270" />
+               <ColumnDefinition Width="100" />
                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Border Grid.Column="0"  BorderThickness="0,0,2,0" BorderBrush="#E8E9EA" >
@@ -275,10 +276,23 @@
                   <Label Grid.Row="1" Content="색" HorizontalContentAlignment="Center"/>
                </Grid>
             </Border>
+            <Border Grid.Column="7"  BorderThickness="0,0,2,0" BorderBrush="#E8E9EA" >
+               <Grid>
+                  <Grid.RowDefinitions>
+                     <RowDefinition Height="*"/>
+                     <RowDefinition Height="25"/>
+                  </Grid.RowDefinitions>
+                  <Thumb Name="CanvasThumb" Grid.Row="0" DragDelta="Canvas_DragDelta"
+                         DragStarted="Canvas_DragStarted" DragCompleted="Canvas_DragCompleted"/>
+                  <Label Grid.Row="1" Content="캔버스 크기조정" HorizontalContentAlignment="Center"/>
+               </Grid>
+            </Border>
          </Grid>
       </Grid>
-      <Grid Name="Canvas" Grid.Row="1" Background="#CAD4E3" >
-         
-      </Grid>
+      <ScrollViewer Grid.Row="1" >
+         <Grid Background="#DAE3F0">
+            <Canvas Name="Canvas" Grid.Row="0" Grid.Column="0" Width="800" Height="500" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" />
+         </Grid>
+      </ScrollViewer>
    </Grid>
 </Window>
