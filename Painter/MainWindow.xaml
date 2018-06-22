@@ -209,8 +209,8 @@
                      <RowDefinition Height="*"/>
                      <RowDefinition Height="25"/>
                   </Grid.RowDefinitions>
-                  <Button Grid.Row="0" Name="Btn_Thickness" Background="#F5F6F7" BorderBrush="#E8E9EA">
-                     <Image Source="images/thickness.png"/>
+                  <Button Grid.Row="0" Name="Btn_Thickness" Background="#F5F6F7" BorderBrush="#E8E9EA" Click="Btn_Thickness_Click">
+                     <Image Name="thickIcon" Source="images/thin.jpg"/>
                   </Button>
                   <Label Grid.Row="1" Content="두께" HorizontalContentAlignment="Center"/>
                </Grid>

@@ -141,5 +141,10 @@
   <ItemGroup>
     <Resource Include="images\thickness.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\morethick.jpg" />
+    <Resource Include="images\thick.jpg" />
+    <Resource Include="images\thin.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/thickness.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/morethick.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/thick.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/thin.jpg")]
 
 

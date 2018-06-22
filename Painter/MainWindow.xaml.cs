@@ -27,6 +27,13 @@ namespace Painter
         MouseEventHandler mouseMoveEvent;
         MouseButtonEventHandler startDrawEvent;
         Dictionary<String, SolidColorBrush> colorDict;
+
+        // 두께 설정 상수
+        const int THIN = 2;
+        const int THICK = 6;
+        const int MORE_THICK = 10;
+        int thickness = THIN;
+
         object DrawingObject;
 
         public MainWindow()
@@ -122,6 +129,7 @@ namespace Painter
             Line line = new Line();
             ReadyToDraw(line);
             line.Stroke = foreGroundColor;
+            line.StrokeThickness = thickness;
         }
 
         // Drag정도에 따라 캔버스 크기 조정
@@ -160,5 +168,24 @@ namespace Painter
             foreColor.Background = foreGroundColor;
         }
 
+        private void Btn_Thickness_Click(object sender, RoutedEventArgs e)
+        {
+            thickness += 4;
+            if (thickness > MORE_THICK)
+                thickness = THIN;
+
+            switch (thickness )
+            {
+                case THIN:
+                    thickIcon.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,/images/thin.jpg"));
+                    break;
+                case THICK:
+                    thickIcon.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,/images/thick.jpg"));
+                    break;
+                case MORE_THICK:
+                    thickIcon.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,/images/morethick.jpg"));
+                    break;
+            }
+        }
     }
 }
