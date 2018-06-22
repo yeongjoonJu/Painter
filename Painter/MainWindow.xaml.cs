@@ -28,7 +28,7 @@ namespace Painter
         MouseEventHandler mouseMoveEvent;
         MouseButtonEventHandler startDrawEvent;
         Dictionary<String, SolidColorBrush> colorDict;
-        Point priorPoint;
+        Point priorPoint, startPoint;
 
         // 두께 설정 상수
         const int THIN = 2;
@@ -47,6 +47,7 @@ namespace Painter
             mouseUpEvent = new MouseButtonEventHandler(FinishDraw);
             mouseMoveEvent = new MouseEventHandler(MoveMouse);
             startDrawEvent = new MouseButtonEventHandler(StartDraw);
+            //paintCanvas.MouseMove += new MouseEventHandler(PrintPoint);
             InitColor();
         }
 
@@ -72,8 +73,8 @@ namespace Painter
 
         public Point GetCurrentPoint()
         {
-            Mouse.Capture(Canvas);
-            return Mouse.GetPosition(Canvas);
+            Mouse.Capture(paintCanvas);
+            return Mouse.GetPosition(paintCanvas);
         }
 
         public void ReadyToDraw(object shape)
@@ -82,7 +83,7 @@ namespace Painter
             if (shape.GetType().ToString().Equals("System.Windows.Shapes.Path"))
                 Mouse.OverrideCursor = Cursors.Pen;
             DrawingObject = shape;
-            Canvas.MouseDown += startDrawEvent;
+            paintCanvas.MouseDown += startDrawEvent;
         }
 
         public void StartDraw(object sender, MouseButtonEventArgs e)
@@ -96,7 +97,7 @@ namespace Painter
                 line.Y1 = point.Y;
                 line.X2 = point.X;
                 line.Y2 = point.Y;
-                Canvas.Children.Add(line);
+                paintCanvas.Children.Add(line);
             }
             // 브러쉬로 그리기
             else if(DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Path"))
@@ -110,35 +111,52 @@ namespace Painter
                 figures.Add(figure);
                 geometry.Figures = figures;
                 brush.Data = geometry;
-                Canvas.Children.Add(brush);
+                paintCanvas.Children.Add(brush);
             }
-            Canvas.MouseUp += mouseUpEvent;
-            Canvas.MouseMove += mouseMoveEvent;
+            else if(DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Rectangle"))
+            {
+                Rectangle rectangle = (Rectangle)DrawingObject;
+                Canvas.SetLeft(rectangle, point.X);
+                Canvas.SetTop(rectangle, point.Y);
+                startPoint = point;
+                paintCanvas.Children.Add(rectangle);
+            }
+            paintCanvas.MouseUp += mouseUpEvent;
+            paintCanvas.MouseMove += mouseMoveEvent;
         }
 
         // 그리기가 끝났을 때 발생하는 이벤트
         public void FinishDraw(object sender, MouseButtonEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Arrow;
-            Canvas.MouseUp -= mouseUpEvent;
-            Canvas.MouseDown -= startDrawEvent;
-            Canvas.MouseMove -= mouseMoveEvent;
+            paintCanvas.MouseUp -= mouseUpEvent;
+            paintCanvas.MouseDown -= startDrawEvent;
+            paintCanvas.MouseMove -= mouseMoveEvent;
             paintedShape.Add(DrawingObject);
             DrawingObject = null;
+            
+        }
+        
+        public void PrintPoint(object sender, MouseEventArgs e)
+        {
+            Point point = GetCurrentPoint();
+            this.Title = "그림판  X : " + point.X + ", Y : " + point.Y;
         }
 
         public void MoveMouse(object sender, MouseEventArgs e)
         {
             Point point = GetCurrentPoint();
+
             /* 원래의 타입으로 변환*/
 
             // 선 그리기
-           if(DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Line")){
+            if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Line"))
+            {
                 Line line = (Line)DrawingObject;
                 line.X2 = point.X;
                 line.Y2 = point.Y;
-                Canvas.Children.Remove(line);
-                Canvas.Children.Add(line);
+                paintCanvas.Children.Remove(line);
+                paintCanvas.Children.Add(line);
             }
             // 브러쉬로 그리기
             else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Path"))
@@ -152,8 +170,30 @@ namespace Painter
                 quadratic.Point1 = priorPoint;
                 quadratic.Point2 = point;
                 pathSegments.Add(quadratic);
-                Canvas.Children.Remove(brush);
-                Canvas.Children.Add(brush);
+                paintCanvas.Children.Remove(brush);
+                paintCanvas.Children.Add(brush);
+            }
+            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Rectangle"))
+            {
+                Rectangle rectangle = (Rectangle)DrawingObject;
+             
+                double width = point.X - startPoint.X;
+                double height = point.Y - startPoint.Y;
+
+                if(width < 0) {
+                    width = Math.Abs(width);
+                    Canvas.SetLeft(rectangle, point.X);
+                }
+                if(height < 0) {
+                    height = Math.Abs(height);
+                    Canvas.SetTop(rectangle, point.Y);
+                }
+
+                rectangle.Width = width;
+                rectangle.Height = height;
+
+                paintCanvas.Children.Remove(rectangle);
+                paintCanvas.Children.Add(rectangle);
             }
             priorPoint = point;
         }
@@ -174,17 +214,25 @@ namespace Painter
             brush.StrokeThickness = thickness;
         }
 
+        public void DrawSquare(object sender, RoutedEventArgs e)
+        {
+            Rectangle rectangle = new Rectangle();
+            ReadyToDraw(rectangle);
+            rectangle.Stroke = foreGroundColor;
+            rectangle.StrokeThickness = thickness;
+        }
+
         // Drag정도에 따라 캔버스 크기 조정
         private void Canvas_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
             //Move the Thumb to the mouse position during the drag operation
-            double yadjust = Canvas.Height + e.VerticalChange / 10;
-            double xadjust = Canvas.Width + e.HorizontalChange / 10;
+            double yadjust = paintCanvas.Height + e.VerticalChange / 10;
+            double xadjust = paintCanvas.Width + e.HorizontalChange / 10;
 
             if ((xadjust >= 100) && (yadjust >= 100))
             {
-                Canvas.Width = xadjust;
-                Canvas.Height = yadjust;
+                paintCanvas.Width = xadjust;
+                paintCanvas.Height = yadjust;
                 Canvas.SetLeft(CanvasThumb, Canvas.GetLeft(CanvasThumb) +
                                         e.HorizontalChange);
                 Canvas.SetTop(CanvasThumb, Canvas.GetTop(CanvasThumb) +

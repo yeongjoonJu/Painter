@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Painter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="768" Width="1200">
+        Title="그림판" Height="768" Width="1200">
 
    <Grid>
       <Grid.RowDefinitions>
@@ -137,7 +137,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                      </Grid.ColumnDefinitions>
-                     <Button Name="Btn_Pensil" Grid.Row="0" Grid.Column="0" Background="#F5F6F7" BorderBrush="#E8E9EA" >
+                     <Button Name="Btn_Pensil" Grid.Row="0" Grid.Column="0" Background="#F5F6F7" Click="DrawBrush" BorderBrush="#E8E9EA" >
                         <Image Source="images/pensilIcon.png"/>
                      </Button>
                      <Button Name="Btn_Paint" Grid.Row="0" Grid.Column="1" Background="#F5F6F7" BorderBrush="#E8E9EA">
@@ -196,7 +196,7 @@
                      <Button Name="Btn_Circle" Grid.Row="0" Grid.Column="2" Background="White" BorderBrush="#E8E9EA">
                         <Image Source="images/circle.jpg"/>
                      </Button>
-                     <Button Name="Btn_Square" Grid.Row="1" Grid.Column="0" Background="White" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Square" Grid.Row="1" Grid.Column="0" Background="White" Click="DrawSquare" BorderBrush="#E8E9EA">
                         <Image Source="images/square.jpg"/>
                      </Button>
                   </Grid>
@@ -291,7 +291,7 @@
       </Grid>
       <ScrollViewer Grid.Row="1" >
          <Grid Background="#DAE3F0">
-            <Canvas Name="Canvas" Width="800" Height="500" Background="White" Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Canvas Name="paintCanvas" Width="800" Height="500" Background="White" Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
          </Grid>
       </ScrollViewer>
    </Grid>
