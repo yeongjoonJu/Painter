@@ -26,6 +26,7 @@ namespace Painter
         MouseButtonEventHandler mouseUpEvent;
         MouseEventHandler mouseMoveEvent;
         MouseButtonEventHandler startDrawEvent;
+        Dictionary<String, SolidColorBrush> colorDict;
         object DrawingObject;
 
         public MainWindow()
@@ -37,6 +38,27 @@ namespace Painter
             mouseUpEvent = new MouseButtonEventHandler(FinishDraw);
             mouseMoveEvent = new MouseEventHandler(MoveMouse);
             startDrawEvent = new MouseButtonEventHandler(StartDraw);
+            InitColor();
+        }
+
+        public void InitColor()
+        {
+            colorDict = new Dictionary<string, SolidColorBrush>();
+            colorDict["Black"] = Brushes.Black;
+            colorDict["White"] = Brushes.White;
+            colorDict["Red"] = Brushes.Red;
+            colorDict["Orange"] = Brushes.Orange;
+            colorDict["Yellow"] = Brushes.Yellow;
+            colorDict["Gray"] = Brushes.Gray;
+            colorDict["DimGray"] = Brushes.DimGray;
+            colorDict["Pink"] = Brushes.Pink;
+            colorDict["Beige"] = Brushes.Beige;
+            colorDict["Green"] = Brushes.Green;
+            colorDict["GreenYellow"] = Brushes.GreenYellow;
+            colorDict["SkyBlue"] = Brushes.SkyBlue;
+            colorDict["LightCoral"] = Brushes.LightCoral;
+            colorDict["HotPink"] = Brushes.HotPink;
+            colorDict["Brown"] = Brushes.Brown;
         }
 
         public Point GetCurrentPoint()
@@ -128,6 +150,14 @@ namespace Painter
         private void Canvas_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             CanvasThumb.Background = Brushes.LightGray;
+        }
+        
+        public void ChangeColor(object sender, RoutedEventArgs e)
+        {
+            Button colorButton = (Button)sender;
+            String color = colorButton.Name.Substring(4);
+            foreGroundColor = colorDict[color];
+            foreColor.Background = foreGroundColor;
         }
 
     }

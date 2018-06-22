@@ -256,21 +256,21 @@
                            <ColumnDefinition/>
                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Button Name="Btn_Black" Grid.Row="0" Grid.Column="0" Background="Black" BorderBrush="White"/>
-                        <Button Name="Btn_White" Grid.Row="0" Grid.Column="1" Background="White" BorderBrush="White"/>
-                        <Button Name="Btn_Red" Grid.Row="0" Grid.Column="2" Background="Red" BorderBrush="White"/>
-                        <Button Name="Btn_Orange" Grid.Row="0" Grid.Column="3" Background="Orange" BorderBrush="White"/>
-                        <Button Name="Btn_Yellow" Grid.Row="0" Grid.Column="4" Background="Yellow" BorderBrush="White"/>
-                        <Button Name="Btn_Gray" Grid.Row="1" Grid.Column="0" Background="Gray" BorderBrush="White"/>
-                        <Button Name="Btn_DimGray" Grid.Row="1" Grid.Column="1" Background="DimGray" BorderBrush="White"/>
-                        <Button Name="Btn_Pink" Grid.Row="1" Grid.Column="2" Background="Pink" BorderBrush="White"/>
-                        <Button Name="Btn_Beige" Grid.Row="1" Grid.Column="3" Background="Beige" BorderBrush="White"/>
-                        <Button Name="Btn_Green" Grid.Row="1" Grid.Column="4" Background="Green" BorderBrush="White"/>
-                        <Button Name="Btn_GreenYellow" Grid.Row="2" Grid.Column="0" Background="GreenYellow" BorderBrush="White"/>
-                        <Button Name="Btn_SkyBlue" Grid.Row="2" Grid.Column="1" Background="SkyBlue" BorderBrush="White"/>
-                        <Button Name="Btn_LightCoral" Grid.Row="2" Grid.Column="2" Background="LightCoral" BorderBrush="White"/>
-                        <Button Name="Btn_HotPink" Grid.Row="2" Grid.Column="3" Background="HotPink" BorderBrush="White"/>
-                        <Button Name="Btn_Brown" Grid.Row="2" Grid.Column="4" Background="Brown" BorderBrush="White"/>
+                        <Button Name="Btn_Black" Grid.Row="0" Grid.Column="0" Background="Black" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_White" Grid.Row="0" Grid.Column="1" Background="White" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_Red" Grid.Row="0" Grid.Column="2" Background="Red" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_Orange" Grid.Row="0" Grid.Column="3" Background="Orange" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_Yellow" Grid.Row="0" Grid.Column="4" Background="Yellow" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_Gray" Grid.Row="1" Grid.Column="0" Background="Gray" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_DimGray" Grid.Row="1" Grid.Column="1" Background="DimGray" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_Pink" Grid.Row="1" Grid.Column="2" Background="Pink" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_Beige" Grid.Row="1" Grid.Column="3" Background="Beige" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_Green" Grid.Row="1" Grid.Column="4" Background="Green" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_GreenYellow" Grid.Row="2" Grid.Column="0" Background="GreenYellow" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_SkyBlue" Grid.Row="2" Grid.Column="1" Background="SkyBlue" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_LightCoral" Grid.Row="2" Grid.Column="2" Background="LightCoral" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_HotPink" Grid.Row="2" Grid.Column="3" Background="HotPink" BorderBrush="White" Click="ChangeColor"/>
+                        <Button Name="Btn_Brown" Grid.Row="2" Grid.Column="4" Background="Brown" BorderBrush="White" Click="ChangeColor"/>
                      </Grid>
                   </Grid>
                   <Label Grid.Row="1" Content="색" HorizontalContentAlignment="Center"/>
@@ -291,7 +291,7 @@
       </Grid>
       <ScrollViewer Grid.Row="1" >
          <Grid Background="#DAE3F0">
-            <Canvas Name="Canvas" Grid.Row="0" Grid.Column="0" Width="800" Height="500" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" />
+            <Canvas Name="Canvas" Width="800" Height="500" Background="White" Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
          </Grid>
       </ScrollViewer>
    </Grid>
