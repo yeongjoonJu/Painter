@@ -21,17 +21,85 @@ namespace Painter
     public partial class MainWindow : Window
     {
         List<object> paintedShape;
-        
+        SolidColorBrush foreGroundColor;
+        SolidColorBrush backGroundColor;
+        MouseButtonEventHandler mouseUpEvent;
+        MouseEventHandler mouseMoveEvent;
+        MouseButtonEventHandler startDrawEvent;
+        object DrawingObject;
 
         public MainWindow()
         {
             InitializeComponent();
             paintedShape = new List<object>();
+            foreGroundColor = Brushes.Black;
+            backGroundColor = Brushes.White;
+            mouseUpEvent = new MouseButtonEventHandler(FinishDraw);
+            mouseMoveEvent = new MouseEventHandler(MoveMouse);
+            startDrawEvent = new MouseButtonEventHandler(StartDraw);
         }
 
+        public Point GetCurrentPoint()
+        {
+            Mouse.Capture(Canvas);
+            return Mouse.GetPosition(Canvas);
+        }
+
+        public void ReadyToDraw(object shape)
+        {
+            Mouse.OverrideCursor = Cursors.Cross;
+            DrawingObject = shape;
+            Canvas.MouseDown += startDrawEvent;
+        }
+
+        public void StartDraw(object sender, MouseButtonEventArgs e)
+        {
+            Point point = GetCurrentPoint();
+            // 선 그리기
+            if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Line")) {
+                Line line = (Line)DrawingObject;
+                line.X1 = point.X;
+                line.Y1 = point.Y;
+                line.X2 = point.X;
+                line.Y2 = point.Y;
+                Canvas.Children.Add(line);
+            }
+            Canvas.MouseUp += mouseUpEvent;
+            Canvas.MouseMove += mouseMoveEvent;
+        }
+
+        // 그리기가 끝났을 때 발생하는 이벤트
+        public void FinishDraw(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Arrow;
+            Canvas.MouseUp -= mouseUpEvent;
+            Canvas.MouseDown -= startDrawEvent;
+            Canvas.MouseMove -= mouseMoveEvent;
+            paintedShape.Add(DrawingObject);
+            DrawingObject = null;
+        }
+
+        public void MoveMouse(object sender, MouseEventArgs e)
+        {
+            Point point = GetCurrentPoint();
+            
+            /* 원래의 타입으로 변환*/
+
+            // 선 그리기
+           if(DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Line")){
+                Line line = (Line)DrawingObject;
+                line.X2 = point.X;
+                line.Y2 = point.Y;
+                Canvas.Children.Remove(line);
+                Canvas.Children.Add(line);
+            }
+        }
+        
         public void DrawLine(object sender, RoutedEventArgs e)
         {
             Line line = new Line();
+            ReadyToDraw(line);
+            line.Stroke = foreGroundColor;
         }
 
         // Drag정도에 따라 캔버스 크기 조정
