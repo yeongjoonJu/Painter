@@ -12,7 +12,7 @@
          <RowDefinition Height="125"/>
          <RowDefinition Height="*"/>
       </Grid.RowDefinitions>
-      
+
       <Grid Name="MenuBar" Grid.Row="0">
          <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -193,7 +193,7 @@
                      <Button Name="Btn_Line" Grid.Row="0" Grid.Column="1" Background="White" Click="DrawLine" BorderBrush="#E8E9EA">
                         <Image Source="images/line.jpg"/>
                      </Button>
-                     <Button Name="Btn_Circle" Grid.Row="0" Grid.Column="2" Background="White" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Circle" Grid.Row="0" Grid.Column="2" Background="White" Click="DrawCircle" BorderBrush="#E8E9EA">
                         <Image Source="images/circle.jpg"/>
                      </Button>
                      <Button Name="Btn_Square" Grid.Row="1" Grid.Column="0" Background="White" Click="DrawSquare" BorderBrush="#E8E9EA">

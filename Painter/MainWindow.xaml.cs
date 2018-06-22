@@ -47,7 +47,6 @@ namespace Painter
             mouseUpEvent = new MouseButtonEventHandler(FinishDraw);
             mouseMoveEvent = new MouseEventHandler(MoveMouse);
             startDrawEvent = new MouseButtonEventHandler(StartDraw);
-            //paintCanvas.MouseMove += new MouseEventHandler(PrintPoint);
             InitColor();
         }
 
@@ -100,7 +99,7 @@ namespace Painter
                 paintCanvas.Children.Add(line);
             }
             // 브러쉬로 그리기
-            else if(DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Path"))
+            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Path"))
             {
                 Path brush = (Path)DrawingObject;
                 PathGeometry geometry = new PathGeometry();
@@ -113,13 +112,21 @@ namespace Painter
                 brush.Data = geometry;
                 paintCanvas.Children.Add(brush);
             }
-            else if(DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Rectangle"))
+            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Rectangle"))
             {
                 Rectangle rectangle = (Rectangle)DrawingObject;
                 Canvas.SetLeft(rectangle, point.X);
                 Canvas.SetTop(rectangle, point.Y);
                 startPoint = point;
                 paintCanvas.Children.Add(rectangle);
+            }
+            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Ellipse"))
+            {
+                Ellipse ellipse = (Ellipse)DrawingObject;
+                Canvas.SetLeft(ellipse, point.X);
+                Canvas.SetTop(ellipse, point.Y);
+                startPoint = point;
+                paintCanvas.Children.Add(ellipse);
             }
             paintCanvas.MouseUp += mouseUpEvent;
             paintCanvas.MouseMove += mouseMoveEvent;
@@ -134,13 +141,6 @@ namespace Painter
             paintCanvas.MouseMove -= mouseMoveEvent;
             paintedShape.Add(DrawingObject);
             DrawingObject = null;
-            
-        }
-        
-        public void PrintPoint(object sender, MouseEventArgs e)
-        {
-            Point point = GetCurrentPoint();
-            this.Title = "그림판  X : " + point.X + ", Y : " + point.Y;
         }
 
         public void MoveMouse(object sender, MouseEventArgs e)
@@ -195,6 +195,30 @@ namespace Painter
                 paintCanvas.Children.Remove(rectangle);
                 paintCanvas.Children.Add(rectangle);
             }
+            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Ellipse"))
+            {
+                Ellipse ellipse = (Ellipse)DrawingObject;
+
+                double width = point.X - startPoint.X;
+                double height = point.Y - startPoint.Y;
+
+                if (width < 0)
+                {
+                    width = Math.Abs(width);
+                    Canvas.SetLeft(ellipse, point.X);
+                }
+                if (height < 0)
+                {
+                    height = Math.Abs(height);
+                    Canvas.SetTop(ellipse, point.Y);
+                }
+
+                ellipse.Width = width;
+                ellipse.Height = height;
+
+                paintCanvas.Children.Remove(ellipse);
+                paintCanvas.Children.Add(ellipse);
+            }
             priorPoint = point;
         }
         
@@ -220,6 +244,14 @@ namespace Painter
             ReadyToDraw(rectangle);
             rectangle.Stroke = foreGroundColor;
             rectangle.StrokeThickness = thickness;
+        }
+
+        public void DrawCircle(object sender, RoutedEventArgs e)
+        {
+            Ellipse ellipse = new Ellipse();
+            ReadyToDraw(ellipse);
+            ellipse.Stroke = foreGroundColor;
+            ellipse.StrokeThickness = thickness;
         }
 
         // Drag정도에 따라 캔버스 크기 조정
