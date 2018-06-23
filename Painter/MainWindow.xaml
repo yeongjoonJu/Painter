@@ -40,7 +40,7 @@
                         <Image Source="images/savefile.jpg"/>
                      </MenuItem.Icon>
                   </MenuItem>
-                  <MenuItem Name="menu_exit" Header="끝내기" Foreground="Black">
+                  <MenuItem Name="menu_exit" Header="끝내기" Click="menu_exit_Click" Foreground="Black">
                      <MenuItem.Icon>
                         <Image Source="images/exit.jpg"/>
                      </MenuItem.Icon>
@@ -140,7 +140,7 @@
                      <Button Name="Btn_Pensil" Grid.Row="0" Grid.Column="0" Background="#F5F6F7" Click="DrawBrush" BorderBrush="#E8E9EA" >
                         <Image Source="images/pensilIcon.png"/>
                      </Button>
-                     <Button Name="Btn_Paint" Grid.Row="0" Grid.Column="1" Background="#F5F6F7" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Paint" Grid.Row="0" Grid.Column="1" Background="#F5F6F7" Click="Btn_Paint_Click" BorderBrush="#E8E9EA">
                         <Image Source="images/paintIcon.png"/>
                      </Button>
                      <Button Name="Btn_Text" Grid.Row="0" Grid.Column="2" Background="#F5F6F7" BorderBrush="#E8E9EA">
@@ -149,7 +149,7 @@
                      <Button Name="Btn_Eraser" Grid.Row="1" Grid.Column="0" Background="#F5F6F7" BorderBrush="#E8E9EA">
                         <Image Source="images/eraserIcon.png"/>
                      </Button>
-                     <Button Name="Btn_Pipette" Grid.Row="1" Grid.Column="1" Background="#F5F6F7" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Pipette" Grid.Row="1" Grid.Column="1" Background="#F5F6F7" Click="Btn_Pipette_Click" BorderBrush="#E8E9EA">
                         <Image Source="images/pipetteIcon.png"/>
                      </Button>
                      <Button Name="Btn_Grass" Grid.Row="1" Grid.Column="2" Background="#F5F6F7" BorderBrush="#E8E9EA">

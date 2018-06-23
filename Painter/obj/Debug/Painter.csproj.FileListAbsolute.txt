@@ -12,5 +12,4 @@ C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.csp
 C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.csproj.CoreCompileInputs.cache
 C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.exe
 C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.pdb
-C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\yeongjoon\Documents\Ensharp-Study\Painter\Painter\obj\Debug\Painter.csprojResolveAssemblyReference.cache
