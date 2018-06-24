@@ -375,12 +375,25 @@ namespace Painter
         // 브러쉬, 선을 클릭시 발생
         private void PressLine(object sender, RoutedEventArgs e)
         {
+            Shape shape = (Shape)sender;
             if (painting)
             {
-                Shape shape = (Shape)sender;
                 shape.Stroke = foreGroundColor;
                 Mouse.OverrideCursor = Cursors.Arrow;
                 painting = false;
+            }
+            else if (spoiding)
+            {
+                foreColor.Background = shape.Stroke;
+                foreGroundColor = (SolidColorBrush)foreColor.Background;
+                spoiding = false;
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+            else if (erasing)
+            {
+                paintCanvas.Children.Remove(shape);
+                erasing = false;
+                Mouse.OverrideCursor = Cursors.Arrow;
             }
         }
 
