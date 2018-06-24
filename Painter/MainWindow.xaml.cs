@@ -27,6 +27,7 @@ namespace Painter
         PaintTool paintTool;
         Dictionary<String, SolidColorBrush> colorDict;
         Point priorPoint, startPoint;
+        Thickness margeStartMove;  // 도형 시작 Margin 값
 
         // 두께 설정 상수
         const int THIN = 2;
@@ -38,12 +39,14 @@ namespace Painter
         bool mouseDownFlag = false;
         bool mouseUpFlag = false;
         // bool mouseMoveFlag = false;
+        bool dragMove = false;
         bool painting = false;
         bool spoiding = false;
         bool erasing = false;
 
-        // 선택 박스
+        // 선택 박스, 점
         Shape choiceBox = null;
+        Rectangle[] vertexes = null;
 
         // 그리고 있거나 선택 중인 객체
         object DrawingObject;
@@ -60,6 +63,7 @@ namespace Painter
             paintCanvas.MouseUp += new MouseButtonEventHandler(FinishDraw);
             //paintCanvas.MouseMove += new Mouse EventHandler(MoveMouse);
             mouseMoveEvent = new MouseEventHandler(MoveMouse);
+            this.MouseLeave += ReleaseShape;
             paintTool = new PaintTool(paintCanvas);
 
             colorDict = paintTool.InitColor();
@@ -90,6 +94,7 @@ namespace Painter
         {
             Rectangle rectangle = new Rectangle();
             rectangle.MouseDown += PressShape;
+            rectangle.MouseMove += MoveShape;
             // rectangle.MouseMove += MoveShape;
             ReadyToDraw(rectangle);
             rectangle.Fill = Brushes.Transparent;
@@ -102,7 +107,8 @@ namespace Painter
         {
             Ellipse ellipse = new Ellipse();
             ellipse.MouseDown += PressShape;
-            //ellipse.MouseMove += MoveShape;
+            ellipse.MouseMove += MoveShape;
+            ;
             ReadyToDraw(ellipse);
             ellipse.Fill = Brushes.Transparent;
             ellipse.Stroke = foreGroundColor;
@@ -124,6 +130,14 @@ namespace Painter
         {
             if (mouseDownFlag)
             {
+                // 객체가 선택되면
+                if (paintCanvas.Children.Contains((UIElement)DrawingObject))
+                {
+                    mouseUpFlag = true;
+                    FinishDraw(sender, e);
+                    return;
+                }
+                    
                 Point point = paintTool.GetCurrentPoint();
                 priorPoint = point;
                 // 선 그리기
@@ -196,6 +210,9 @@ namespace Painter
         public void MoveMouse(object sender, MouseEventArgs e)
         {
             Point point = paintTool.GetCurrentPoint();
+            // 캔버스 벗어나는 것을 막는다
+            if (point.X >= paintCanvas.ActualWidth || point.Y >= paintCanvas.ActualHeight || point.X < 0 || point.Y < 0)
+                return;
 
             /* 원래의 타입으로 변환*/
 
@@ -221,10 +238,10 @@ namespace Painter
                 pathSegments.Add(quadratic);
             }
 
-            // 정사각형 그리기
-            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Rectangle"))
+            // 정사각형, 원 그리기
+            else
             {
-                Rectangle rectangle = (Rectangle)DrawingObject;
+                Shape shape = (Shape)DrawingObject;
 
                 double width = point.X - startPoint.X;
                 double height = point.Y - startPoint.Y;
@@ -232,39 +249,16 @@ namespace Painter
                 if (width < 0)
                 {
                     width = Math.Abs(width);
-                    Canvas.SetLeft(rectangle, point.X);
+                    Canvas.SetLeft(shape, point.X);
                 }
                 if (height < 0)
                 {
                     height = Math.Abs(height);
-                    Canvas.SetTop(rectangle, point.Y);
+                    Canvas.SetTop(shape, point.Y);
                 }
 
-                rectangle.Width = width;
-                rectangle.Height = height;
-            }
-
-            // 원 그리기
-            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Ellipse"))
-            {
-                Ellipse ellipse = (Ellipse)DrawingObject;
-
-                double width = point.X - startPoint.X;
-                double height = point.Y - startPoint.Y;
-
-                if (width < 0)
-                {
-                    width = Math.Abs(width);
-                    Canvas.SetLeft(ellipse, point.X);
-                }
-                if (height < 0)
-                {
-                    height = Math.Abs(height);
-                    Canvas.SetTop(ellipse, point.Y);
-                }
-
-                ellipse.Width = width;
-                ellipse.Height = height;
+                shape.Width = width;
+                shape.Height = height;
             }
             priorPoint = point;
 
@@ -278,7 +272,7 @@ namespace Painter
             double yadjust = paintCanvas.Height + e.VerticalChange / 10;
             double xadjust = paintCanvas.Width + e.HorizontalChange / 10;
 
-            if (((xadjust >= 100) && (yadjust >= 100)) && (xadjust <= 1400) && (yadjust <= 1024))
+            if (((xadjust >= 100) && (yadjust >= 100)) && (xadjust <= 1800) && (yadjust <= 900))
             {
                 paintCanvas.Width = xadjust;
                 paintCanvas.Height = yadjust;
@@ -325,7 +319,7 @@ namespace Painter
         }
 
         // 그려진 도형을 선택 시 이벤트 발생
-        private void PressShape(object sender, RoutedEventArgs e)
+        private void PressShape(object sender, MouseEventArgs e)
         {
             Shape shape = (Shape)sender;
 
@@ -357,52 +351,69 @@ namespace Painter
                     if (shape == DrawingObject)
                     {
                         // 마우스 이벤트 할당
-                        shape.MouseMove += MoveShape;
-                        shape.MouseUp += FinishMoveShape;
+                        startPoint = e.GetPosition(paintCanvas);
+                        margeStartMove = shape.Margin;
+                        dragMove = true;
                         return;
                     }
 
                     // 다른 도형 선택 시 현재 선택 박스 제거
                     paintCanvas.Children.Remove(choiceBox);
+                    for (int i = 0; i < 4; i++)
+                        paintCanvas.Children.Remove(vertexes[i]);
                 }
 
                 DrawingObject = shape;
 
                 // 선택 영역 박스 감싸기
                 choiceBox = paintTool.MakeChoiceBox(shape);
+                vertexes = paintTool.MakeVertexes(choiceBox);
+
+                vertexes[0].MouseMove += LeftTopVertex_Click;
+                vertexes[1].MouseMove += RightTopVertex_Click;
+                vertexes[2].MouseMove += LeftBottomVertex_Click;
+                vertexes[3].MouseMove += RightBottomVertex_Click;
             }
         }
 
         // 도형을 이동
         public void MoveShape(object sender, MouseEventArgs e)
         {
+            if (!dragMove)
+                return;
+
+            Point point = e.GetPosition(paintCanvas);
+            double moveX = (point.X - startPoint.X);
+            double moveY = (point.Y - startPoint.Y);
+            shape.Margin = new Thickness(margeStartMove.Left + moveX, margeStartMove.Top + moveY, margeStartMove.Right, margeStartMove.Bottom);
+
             if (choiceBox != null)
             {
-                Shape shape = (Shape)sender;
-                Point currentPoint = paintTool.GetCurrentPoint();
-                double xPos = Canvas.GetLeft(shape);
-                double yPos = Canvas.GetTop(shape);
-                double deltaX = currentPoint.X - priorPoint.X;
-                double deltaY = currentPoint.Y - priorPoint.Y;
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    Shape shape = (Shape)sender;
+                    Point currentPoint = paintTool.GetCurrentPoint();
+                    double xPos = Canvas.GetLeft(shape);
+                    double yPos = Canvas.GetTop(shape);
+                    double deltaX = currentPoint.X - priorPoint.X;
+                    double deltaY = currentPoint.Y - priorPoint.Y;
 
-                Canvas.SetLeft(shape, xPos - deltaX);
-                Canvas.SetTop(shape, yPos - deltaY);
-                Canvas.SetLeft(choiceBox, xPos - deltaX - 1);
-                Canvas.SetTop(choiceBox, yPos - deltaY - 1);
+                    Canvas.SetLeft(shape, xPos - deltaX);
+                    Canvas.SetTop(shape, yPos - deltaY);
+                    Canvas.SetLeft(choiceBox, xPos - deltaX - 1);
+                    Canvas.SetTop(choiceBox, yPos - deltaY - 1);
 
-                this.WindowState = WindowState.Minimized;
-                this.WindowState = WindowState.Maximized;
+                }
+                //this.WindowState = WindowState.Minimized;
+                //this.WindowState = WindowState.Maximized;
             }
         }
 
-        // 도형을 이동하다가 마우스 버튼을 떼면 발생
-        public void FinishMoveShape(object sender, MouseEventArgs e)
+        public void ReleaseShape(object sender, MouseEventArgs e)
         {
-            Shape shape = (Shape)sender;
-            shape.MouseMove -= MoveShape;
-            shape.MouseUp -= FinishMoveShape;
+            dragMove = false;
         }
-
+                
         // 브러쉬, 선을 클릭시 발생
         private void PressLine(object sender, RoutedEventArgs e)
         {
@@ -434,6 +445,7 @@ namespace Painter
             paintCanvas.Children.Clear();
         }
 
+        // 지우개 버튼 클릭 시 발생
         private void Btn_Eraser_Click(object sender, RoutedEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.No;
@@ -458,6 +470,118 @@ namespace Painter
                 case MORE_THICK:
                     thickIcon.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,/images/morethick.jpg"));
                     break;
+            }
+        }
+
+        private void LeftTopVertex_Click(object sender, MouseEventArgs e)
+        {
+            if(e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point point = e.GetPosition(paintCanvas);
+                Shape shape = (Shape)DrawingObject;
+
+                double deltaX = Canvas.GetLeft(shape) - point.X;
+                double deltaY = Canvas.GetTop(shape) - point.Y;
+
+                // 도형 크기 변경
+                shape.Width += deltaX;
+                shape.Height += deltaY;
+                Canvas.SetLeft(shape, point.X);
+                Canvas.SetTop(shape, point.Y);
+
+                // 선택 영역 변경
+                choiceBox.Width += deltaX;
+                choiceBox.Height += deltaY;
+                Canvas.SetLeft(choiceBox, point.X - 1);
+                Canvas.SetTop(choiceBox, point.Y - 1);
+
+                // 꼭지점 위치 설정
+                Canvas.SetLeft(vertexes[0], point.X - 4);
+                Canvas.SetTop(vertexes[0], point.Y - 4);
+                Canvas.SetTop(vertexes[1], point.Y - 4);
+                Canvas.SetLeft(vertexes[2], point.X - 4);
+            }
+        }
+
+        private void RightTopVertex_Click(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point point = e.GetPosition(paintCanvas);
+                Shape shape = (Shape)DrawingObject;
+
+                double deltaX = Canvas.GetLeft(shape) + shape.Width - point.X;
+                double deltaY = Canvas.GetTop(shape) - point.Y;
+
+                // 도형 크기 변경
+                shape.Width -= deltaX;
+                shape.Height += deltaY;
+                Canvas.SetTop(shape, point.Y);
+
+                // 선택 영역 변경
+                choiceBox.Width -= deltaX;
+                choiceBox.Height += deltaY;
+                Canvas.SetTop(choiceBox, point.Y - 1);
+
+                // 꼭지점 위치 설정
+                Canvas.SetTop(vertexes[0], point.Y - 4);
+                Canvas.SetLeft(vertexes[1], point.X - 4);
+                Canvas.SetTop(vertexes[1], point.Y - 4);
+                Canvas.SetLeft(vertexes[3], point.X - 4);
+            }
+        }
+
+        private void LeftBottomVertex_Click(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point point = e.GetPosition(paintCanvas);
+                Shape shape = (Shape)DrawingObject;
+
+                double deltaX = Canvas.GetLeft(shape) - point.X;
+                double deltaY = Canvas.GetTop(shape) + shape.Height - point.Y;
+
+                // 도형 크기 변경
+                shape.Width += deltaX;
+                shape.Height -= deltaY;
+                Canvas.SetLeft(shape, point.X);
+
+                // 선택 영역 변경
+                choiceBox.Width += deltaX;
+                choiceBox.Height -= deltaY;
+                Canvas.SetLeft(choiceBox, point.X - 1);
+
+                // 꼭지점 위치 설정
+                Canvas.SetLeft(vertexes[0], point.X - 4);
+                Canvas.SetLeft(vertexes[2], point.X - 4);
+                Canvas.SetTop(vertexes[2], point.Y - 4);
+                Canvas.SetTop(vertexes[3], point.Y - 4);
+            }
+        }
+
+        private void RightBottomVertex_Click(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point point = e.GetPosition(paintCanvas);
+                Shape shape = (Shape)DrawingObject;
+
+                double deltaX = Canvas.GetLeft(shape) + shape.Width - point.X;
+                double deltaY = Canvas.GetTop(shape) + shape.Height - point.Y;
+
+                // 도형 크기 변경
+                shape.Width -= deltaX;
+                shape.Height -= deltaY;
+
+                // 선택 영역 변경
+                choiceBox.Width -= deltaX;
+                choiceBox.Height -= deltaY;
+
+                // 꼭지점 위치 설정
+                Canvas.SetLeft(vertexes[1], point.X - 4);
+                Canvas.SetTop(vertexes[2], point.Y - 4);
+                Canvas.SetLeft(vertexes[3], point.X - 4);
+                Canvas.SetTop(vertexes[3], point.Y - 4);
             }
         }
     }
