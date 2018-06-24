@@ -63,7 +63,6 @@ namespace Painter
             paintCanvas.MouseUp += new MouseButtonEventHandler(FinishDraw);
             //paintCanvas.MouseMove += new Mouse EventHandler(MoveMouse);
             mouseMoveEvent = new MouseEventHandler(MoveMouse);
-            this.MouseLeave += ReleaseShape;
             paintTool = new PaintTool(paintCanvas);
 
             colorDict = paintTool.InitColor();
@@ -350,10 +349,6 @@ namespace Painter
                     // 현재 선택한 도형과 이미 선택된 도형과 같은지 확인
                     if (shape == DrawingObject)
                     {
-                        // 마우스 이벤트 할당
-                        startPoint = e.GetPosition(paintCanvas);
-                        margeStartMove = shape.Margin;
-                        dragMove = true;
                         return;
                     }
 
@@ -373,47 +368,10 @@ namespace Painter
                 vertexes[1].MouseMove += RightTopVertex_Click;
                 vertexes[2].MouseMove += LeftBottomVertex_Click;
                 vertexes[3].MouseMove += RightBottomVertex_Click;
+                shape.MouseMove += MoveShape;
             }
         }
-
-        // 도형을 이동
-        public void MoveShape(object sender, MouseEventArgs e)
-        {
-            if (!dragMove)
-                return;
-
-            Point point = e.GetPosition(paintCanvas);
-            double moveX = (point.X - startPoint.X);
-            double moveY = (point.Y - startPoint.Y);
-            shape.Margin = new Thickness(margeStartMove.Left + moveX, margeStartMove.Top + moveY, margeStartMove.Right, margeStartMove.Bottom);
-
-            if (choiceBox != null)
-            {
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    Shape shape = (Shape)sender;
-                    Point currentPoint = paintTool.GetCurrentPoint();
-                    double xPos = Canvas.GetLeft(shape);
-                    double yPos = Canvas.GetTop(shape);
-                    double deltaX = currentPoint.X - priorPoint.X;
-                    double deltaY = currentPoint.Y - priorPoint.Y;
-
-                    Canvas.SetLeft(shape, xPos - deltaX);
-                    Canvas.SetTop(shape, yPos - deltaY);
-                    Canvas.SetLeft(choiceBox, xPos - deltaX - 1);
-                    Canvas.SetTop(choiceBox, yPos - deltaY - 1);
-
-                }
-                //this.WindowState = WindowState.Minimized;
-                //this.WindowState = WindowState.Maximized;
-            }
-        }
-
-        public void ReleaseShape(object sender, MouseEventArgs e)
-        {
-            dragMove = false;
-        }
-                
+              
         // 브러쉬, 선을 클릭시 발생
         private void PressLine(object sender, RoutedEventArgs e)
         {
@@ -471,6 +429,40 @@ namespace Painter
                     thickIcon.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,/images/morethick.jpg"));
                     break;
             }
+        }
+
+        // 도형을 이동
+        public void MoveShape(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point point = e.GetPosition(paintCanvas);
+                Shape shape = (Shape)DrawingObject;
+                Point pointInShape = e.GetPosition(shape);
+
+                double deltaX = priorPoint.X - point.X;
+                double deltaY = priorPoint.Y - point.Y;
+
+                // 도형 위치 변경
+                Canvas.SetLeft(shape, Canvas.GetLeft(shape) - deltaX);
+                Canvas.SetTop(shape, Canvas.GetTop(shape) - deltaY);
+
+                // 선택 영역 변경
+                Canvas.SetLeft(choiceBox, Canvas.GetLeft(shape) - deltaX - 1);
+                Canvas.SetTop(choiceBox, Canvas.GetTop(shape) - deltaY - 1);
+
+                // 꼭지점 위치 설정
+                Canvas.SetLeft(vertexes[0], Canvas.GetLeft(shape) - deltaX - 4);
+                Canvas.SetTop(vertexes[0], Canvas.GetTop(shape) - deltaY - 4);
+                Canvas.SetLeft(vertexes[1], Canvas.GetLeft(shape) + shape.Width - deltaX - 4);
+                Canvas.SetTop(vertexes[1], Canvas.GetTop(shape) - deltaY - 4);
+                Canvas.SetLeft(vertexes[2], Canvas.GetLeft(shape) - deltaX - 4);
+                Canvas.SetTop(vertexes[2], Canvas.GetTop(shape) + shape.Height - deltaY - 4);
+                Canvas.SetLeft(vertexes[3], Canvas.GetLeft(shape) + shape.Width - deltaX - 4);
+                Canvas.SetTop(vertexes[3], Canvas.GetTop(shape) + shape.Height - deltaY - 4);
+            }
+
+            priorPoint = e.GetPosition(paintCanvas);
         }
 
         private void LeftTopVertex_Click(object sender, MouseEventArgs e)
