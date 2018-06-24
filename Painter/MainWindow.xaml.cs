@@ -24,9 +24,6 @@ namespace Painter
         List<object> paintedShape;
         SolidColorBrush foreGroundColor;
         SolidColorBrush backGroundColor;
-        MouseButtonEventHandler mouseUpEvent;
-        MouseEventHandler mouseMoveEvent;
-        MouseButtonEventHandler startDrawEvent;
         Dictionary<String, SolidColorBrush> colorDict;
         Point priorPoint, startPoint;
 
@@ -41,6 +38,8 @@ namespace Painter
         bool mouseUpFlag = false;
         bool mouseMoveFlag = false;
         bool painting = false;
+        bool choiced = false;
+        bool spoiding = false;
 
         object DrawingObject;
 
@@ -194,6 +193,7 @@ namespace Painter
                     paintCanvas.Children.Remove(brush);
                     paintCanvas.Children.Add(brush);
                 }
+
                 // 정사각형 그리기
                 else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Rectangle"))
                 {
@@ -219,6 +219,7 @@ namespace Painter
                     paintCanvas.Children.Remove(rectangle);
                     paintCanvas.Children.Add(rectangle);
                 }
+
                 // 원 그리기
                 else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Ellipse"))
                 {
@@ -270,8 +271,9 @@ namespace Painter
         {
             Rectangle rectangle = new Rectangle();
             rectangle.MouseDown += PressShape;
+            rectangle.MouseMove += MoveShape;
             ReadyToDraw(rectangle);
-            rectangle.Fill = backGroundColor;
+            rectangle.Fill = Brushes.Transparent;
             rectangle.Stroke = foreGroundColor;
             rectangle.StrokeThickness = thickness;
         }
@@ -280,8 +282,9 @@ namespace Painter
         {
             Ellipse ellipse = new Ellipse();
             ellipse.MouseDown += PressShape;
+            ellipse.MouseMove += MoveShape;
             ReadyToDraw(ellipse);
-            ellipse.Fill = backGroundColor;
+            ellipse.Fill = Brushes.Transparent;
             ellipse.Stroke = foreGroundColor;
             ellipse.StrokeThickness = thickness;
         }
@@ -320,48 +323,12 @@ namespace Painter
             foreGroundColor = colorDict[color];
             foreColor.Background = foreGroundColor;
         }
-
+        
         // 색상 추출
-        private System.Drawing.Color ScreenColor(int x, int y)
-        {
-            System.Drawing.Size sz = new System.Drawing.Size(1, 1);
-            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(1, 1);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
-            g.CopyFromScreen(x, y, 0, 0, sz);
-            return bmp.GetPixel(0, 0);
-        }
-
-        // 정수를 16진수로 변환
-        public string ToHexString(int nor)
-        {
-            byte[] bytes = BitConverter.GetBytes(nor);
-            string hexString = "";
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                hexString += bytes[i].ToString("X2");
-            }
-            return hexString;
-        }
-
-        private void ExtractColor(object sender, MouseEventArgs e)
-        {
-            String color;
-            Point point = GetCurrentPoint();
-            point.X += 10;
-            point.Y += 135;
-            System.Drawing.Color colorbuf = ScreenColor((int)point.X, (int)point.Y);
-            color = ToHexString(colorbuf.R).Substring(0, 2) + ToHexString(colorbuf.G).Substring(0, 2)
-                + ToHexString(colorbuf.B).Substring(0, 2);
-            this.Title = color + " X : " + point.X + ", Y : " + point.Y;
-            foreGroundColor.Color = (Color)ColorConverter.ConvertFromString(color);
-            paintCanvas.MouseDown -= ExtractColor;
-            Mouse.OverrideCursor = Cursors.Arrow;
-        }
-
         private void Btn_Pipette_Click(object sender, RoutedEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Cross;
-            paintCanvas.MouseDown += ExtractColor;
+            spoiding = true;
         }
 
         private void menu_exit_Click(object sender, RoutedEventArgs e)
@@ -377,12 +344,40 @@ namespace Painter
 
         private void PressShape(object sender, RoutedEventArgs e)
         {
+            Shape shape = (Shape)sender;
             if (painting)
             {
-                Shape shape = (Shape)sender;
                 shape.Fill = foreGroundColor;
                 Mouse.OverrideCursor = Cursors.Arrow;
                 painting = false;
+            }
+            else if(spoiding)
+            {
+                foreColor.Background = shape.Fill;
+                foreGroundColor = (SolidColorBrush)foreColor.Background;
+                spoiding = false;
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+            else
+            {
+                //shape.StrokeDashArray = new DoubleCollection() { 2 };
+                // choiced = true;
+                //priorPoint = GetCurrentPoint();
+            }
+        }
+
+        public void MoveShape(object sender, MouseEventArgs e)
+        {
+            if(choiced)
+            {
+                Shape shape = (Shape)sender;
+                Point currentPoint = GetCurrentPoint();
+                double xPos = Canvas.GetLeft(shape);
+                double yPos = Canvas.GetTop(shape);
+                double deltaX = currentPoint.X - priorPoint.X;
+                double deltaY = currentPoint.Y - priorPoint.Y;
+                //Canvas.SetLeft(shape, xPos - deltaX);
+                //Canvas.SetTop(shape, yPos - deltaY);
             }
         }
 
