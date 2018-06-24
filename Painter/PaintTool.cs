@@ -57,7 +57,7 @@ namespace Painter
             choiceBox.Width = shape.Width + 2;
             choiceBox.Height = shape.Height + 2;
             choiceBox.Stroke = Brushes.Blue;
-            choiceBox.StrokeDashArray = new DoubleCollection() { 2 };
+            choiceBox.StrokeDashArray = new DoubleCollection() { 3 };
 
             standard.X = Canvas.GetLeft(shape) - 1;
             standard.Y = Canvas.GetTop(shape) - 1;

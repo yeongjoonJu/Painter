@@ -37,12 +37,15 @@ namespace Painter
         // 이벤트 플래그
         bool mouseDownFlag = false;
         bool mouseUpFlag = false;
-       // bool mouseMoveFlag = false;
+        // bool mouseMoveFlag = false;
         bool painting = false;
-        Shape choiced = null;
         bool spoiding = false;
+        bool erasing = false;
 
-        // 그리고 있는 객체
+        // 선택 박스
+        Shape choiceBox = null;
+
+        // 그리고 있거나 선택 중인 객체
         object DrawingObject;
 
         MouseEventHandler mouseMoveEvent;
@@ -55,7 +58,7 @@ namespace Painter
             backGroundColor = Brushes.White;
             paintCanvas.MouseDown += new MouseButtonEventHandler(StartDraw);
             paintCanvas.MouseUp += new MouseButtonEventHandler(FinishDraw);
-            //paintCanvas.MouseMove += new MouseEventHandler(MoveMouse);
+            //paintCanvas.MouseMove += new Mouse EventHandler(MoveMouse);
             mouseMoveEvent = new MouseEventHandler(MoveMouse);
             paintTool = new PaintTool(paintCanvas);
 
@@ -184,6 +187,7 @@ namespace Painter
                 mouseDownFlag = false;
                 //paintedShape.Add(DrawingObject);
                 DrawingObject = null;
+
                 this.WindowState = WindowState.Minimized;
                 this.WindowState = WindowState.Maximized;
             }
@@ -202,6 +206,7 @@ namespace Painter
                 line.X2 = point.X;
                 line.Y2 = point.Y;
             }
+
             // 브러쉬로 그리기
             else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Path"))
             {
@@ -266,8 +271,6 @@ namespace Painter
             this.Title = "그림판  X : " + priorPoint.X.ToString() + " Y : " + priorPoint.Y.ToString();
         }
 
-        
-
         // Drag정도에 따라 캔버스 크기 조정
         private void Canvas_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
@@ -321,6 +324,7 @@ namespace Painter
             painting = true;
         }
 
+        // 그려진 도형을 선택 시 이벤트 발생
         private void PressShape(object sender, RoutedEventArgs e)
         {
             Shape shape = (Shape)sender;
@@ -338,30 +342,41 @@ namespace Painter
                 spoiding = false;
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
+            else if (erasing)
+            {
+                paintCanvas.Children.Remove(shape);
+                erasing = false;
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
             else
             {
                 // 어떤 도형이 선택되어 있으면
-                if (choiced != null)
+                if (choiceBox != null)
                 {
-                    if(shape==choiced)
+                    // 현재 선택한 도형과 이미 선택된 도형과 같은지 확인
+                    if (shape == DrawingObject)
                     {
+                        // 마우스 이벤트 할당
                         shape.MouseMove += MoveShape;
                         shape.MouseUp += FinishMoveShape;
                         return;
                     }
 
-                    paintCanvas.Children.Remove(choiced);
+                    // 다른 도형 선택 시 현재 선택 박스 제거
+                    paintCanvas.Children.Remove(choiceBox);
                 }
 
+                DrawingObject = shape;
+
                 // 선택 영역 박스 감싸기
-                choiced = paintTool.MakeChoiceBox(shape);
+                choiceBox = paintTool.MakeChoiceBox(shape);
             }
         }
 
         // 도형을 이동
         public void MoveShape(object sender, MouseEventArgs e)
         {
-            if (choiced != null)
+            if (choiceBox != null)
             {
                 Shape shape = (Shape)sender;
                 Point currentPoint = paintTool.GetCurrentPoint();
@@ -372,8 +387,11 @@ namespace Painter
 
                 Canvas.SetLeft(shape, xPos - deltaX);
                 Canvas.SetTop(shape, yPos - deltaY);
-                Canvas.SetLeft(choiced, xPos - deltaX - 1);
-                Canvas.SetTop(choiced, yPos - deltaY - 1);
+                Canvas.SetLeft(choiceBox, xPos - deltaX - 1);
+                Canvas.SetTop(choiceBox, yPos - deltaY - 1);
+
+                this.WindowState = WindowState.Minimized;
+                this.WindowState = WindowState.Maximized;
             }
         }
 
@@ -405,7 +423,8 @@ namespace Painter
             mouseUpFlag = false;
             paintCanvas.MouseMove -= mouseMoveEvent;
             painting = false;
-            choiced = null;
+            choiceBox = null;
+            DrawingObject = null;
             spoiding = false;
         }
 
@@ -415,6 +434,12 @@ namespace Painter
             paintCanvas.Children.Clear();
         }
 
+        private void Btn_Eraser_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.No;
+            erasing = true;
+        }
+
         // 두께 버튼 클릭 이벤트
         private void Btn_Thickness_Click(object sender, RoutedEventArgs e)
         {
@@ -422,7 +447,7 @@ namespace Painter
             if (thickness > MORE_THICK)
                 thickness = THIN;
 
-            switch (thickness )
+            switch (thickness)
             {
                 case THIN:
                     thickIcon.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,/images/thin.jpg"));

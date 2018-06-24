@@ -137,19 +137,19 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                      </Grid.ColumnDefinitions>
-                     <Button Name="Btn_Pensil" Grid.Row="0" Grid.Column="0" Background="#F5F6F7" Click="DrawBrush" BorderBrush="#E8E9EA" >
+                     <Button Name="Btn_Pensil" Grid.Row="0" Grid.Column="0" Click="DrawBrush" Background="#F5F6F7" BorderBrush="#E8E9EA" >
                         <Image Source="images/pensilIcon.png"/>
                      </Button>
-                     <Button Name="Btn_Paint" Grid.Row="0" Grid.Column="1" Background="#F5F6F7" Click="Btn_Paint_Click" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Paint" Grid.Row="0" Grid.Column="1" Click="Btn_Paint_Click"  Background="#F5F6F7" BorderBrush="#E8E9EA">
                         <Image Source="images/paintIcon.png"/>
                      </Button>
                      <Button Name="Btn_Text" Grid.Row="0" Grid.Column="2" Background="#F5F6F7" BorderBrush="#E8E9EA">
                         <Image Source="images/textIcon.png"/>
                      </Button>
-                     <Button Name="Btn_Eraser" Grid.Row="1" Grid.Column="0" Background="#F5F6F7" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Eraser" Grid.Row="1" Grid.Column="0" Click="Btn_Eraser_Click" Background="#F5F6F7" BorderBrush="#E8E9EA">
                         <Image Source="images/eraserIcon.png"/>
                      </Button>
-                     <Button Name="Btn_Pipette" Grid.Row="1" Grid.Column="1" Background="#F5F6F7" Click="Btn_Pipette_Click" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Pipette" Grid.Row="1" Grid.Column="1" Click="Btn_Pipette_Click" Background="#F5F6F7" BorderBrush="#E8E9EA">
                         <Image Source="images/pipetteIcon.png"/>
                      </Button>
                      <Button Name="Btn_Grass" Grid.Row="1" Grid.Column="2" Background="#F5F6F7" BorderBrush="#E8E9EA">
@@ -165,7 +165,7 @@
                      <RowDefinition Height="*"/>
                      <RowDefinition Height="25"/>
                   </Grid.RowDefinitions>
-                  <Button Name="Btn_Brush" Grid.Row="0" Background="White" BorderBrush="#E8E9EA" Click="DrawBrush">
+                  <Button Name="Btn_Brush" Grid.Row="0" Background="White" Click="DrawBrush" BorderBrush="#E8E9EA">
                      <Image Source="images/brushIcon.png"/>
                   </Button>
                   <Label Grid.Row="1" Content="브러쉬" HorizontalContentAlignment="Center"/>
@@ -187,16 +187,16 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                      </Grid.ColumnDefinitions>
-                     <Button Name="Btn_Cursor" Grid.Row="0" Grid.Column="0" Background="White" Click="Btn_Cursor_Click" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Cursor" Grid.Row="0" Grid.Column="0" Click="Btn_Cursor_Click" Background="White" BorderBrush="#E8E9EA">
                         <Image Source="images/cursor.png"/>
                      </Button>
-                     <Button Name="Btn_Line" Grid.Row="0" Grid.Column="1" Background="White" Click="DrawLine" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Line" Grid.Row="0" Grid.Column="1" Click="DrawLine" Background="White" BorderBrush="#E8E9EA">
                         <Image Source="images/line.jpg"/>
                      </Button>
-                     <Button Name="Btn_Circle" Grid.Row="0" Grid.Column="2" Background="White" Click="DrawCircle" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Circle" Grid.Row="0" Grid.Column="2" Click="DrawCircle" Background="White" BorderBrush="#E8E9EA">
                         <Image Source="images/circle.jpg"/>
                      </Button>
-                     <Button Name="Btn_Square" Grid.Row="1" Grid.Column="0" Background="White" Click="DrawSquare" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Square" Grid.Row="1" Grid.Column="0" Click="DrawSquare" Background="White" BorderBrush="#E8E9EA">
                         <Image Source="images/square.jpg"/>
                      </Button>
                   </Grid>
@@ -209,7 +209,7 @@
                      <RowDefinition Height="*"/>
                      <RowDefinition Height="25"/>
                   </Grid.RowDefinitions>
-                  <Button Grid.Row="0" Name="Btn_Thickness" Background="#F5F6F7" BorderBrush="#E8E9EA" Click="Btn_Thickness_Click">
+                  <Button Grid.Row="0" Name="Btn_Thickness" Click="Btn_Thickness_Click" Background="#F5F6F7" BorderBrush="#E8E9EA">
                      <Image Name="thickIcon" Source="images/thin.jpg"/>
                   </Button>
                   <Label Grid.Row="1" Content="두께" HorizontalContentAlignment="Center"/>
