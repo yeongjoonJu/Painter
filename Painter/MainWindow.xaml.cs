@@ -24,6 +24,7 @@ namespace Painter
         List<object> paintedShape;
         SolidColorBrush foreGroundColor;
         SolidColorBrush backGroundColor;
+        PaintTool paintTool;
         Dictionary<String, SolidColorBrush> colorDict;
         Point priorPoint, startPoint;
 
@@ -36,12 +37,15 @@ namespace Painter
         // 이벤트 플래그
         bool mouseDownFlag = false;
         bool mouseUpFlag = false;
-        bool mouseMoveFlag = false;
+       // bool mouseMoveFlag = false;
         bool painting = false;
-        bool choiced = false;
+        Shape choiced = null;
         bool spoiding = false;
 
+        // 그리고 있는 객체
         object DrawingObject;
+
+        MouseEventHandler mouseMoveEvent;
 
         public MainWindow()
         {
@@ -51,51 +55,73 @@ namespace Painter
             backGroundColor = Brushes.White;
             paintCanvas.MouseDown += new MouseButtonEventHandler(StartDraw);
             paintCanvas.MouseUp += new MouseButtonEventHandler(FinishDraw);
-            paintCanvas.MouseMove += new MouseEventHandler(MoveMouse);
-            InitColor();
+            //paintCanvas.MouseMove += new MouseEventHandler(MoveMouse);
+            mouseMoveEvent = new MouseEventHandler(MoveMouse);
+            paintTool = new PaintTool(paintCanvas);
+
+            colorDict = paintTool.InitColor();
         }
 
-        public void InitColor()
+        // 선 그리기 버튼 클릭
+        public void DrawLine(object sender, RoutedEventArgs e)
         {
-            colorDict = new Dictionary<string, SolidColorBrush>();
-            colorDict["Black"] = Brushes.Black;
-            colorDict["White"] = Brushes.White;
-            colorDict["Red"] = Brushes.Red;
-            colorDict["Orange"] = Brushes.Orange;
-            colorDict["Yellow"] = Brushes.Yellow;
-            colorDict["Gray"] = Brushes.Gray;
-            colorDict["DimGray"] = Brushes.DimGray;
-            colorDict["Pink"] = Brushes.Pink;
-            colorDict["Beige"] = Brushes.Beige;
-            colorDict["Green"] = Brushes.Green;
-            colorDict["GreenYellow"] = Brushes.GreenYellow;
-            colorDict["SkyBlue"] = Brushes.SkyBlue;
-            colorDict["LightCoral"] = Brushes.LightCoral;
-            colorDict["HotPink"] = Brushes.HotPink;
-            colorDict["Brown"] = Brushes.Brown;
+            Line line = new Line();
+            line.MouseDown += PressLine;
+            ReadyToDraw(line);
+            line.Stroke = foreGroundColor;
+            line.StrokeThickness = thickness;
         }
 
-        public Point GetCurrentPoint()
+        // 브러쉬 버튼 클릭
+        public void DrawBrush(object sender, RoutedEventArgs e)
         {
-            Mouse.Capture(paintCanvas);
-            return Mouse.GetPosition(paintCanvas);
+            Path brush = new Path();
+            brush.MouseDown += PressLine;
+            ReadyToDraw(brush);
+            brush.Stroke = foreGroundColor;
+            brush.StrokeThickness = thickness;
         }
 
+        // 사각형 그리기 버튼 클릭
+        public void DrawSquare(object sender, RoutedEventArgs e)
+        {
+            Rectangle rectangle = new Rectangle();
+            rectangle.MouseDown += PressShape;
+            // rectangle.MouseMove += MoveShape;
+            ReadyToDraw(rectangle);
+            rectangle.Fill = Brushes.Transparent;
+            rectangle.Stroke = foreGroundColor;
+            rectangle.StrokeThickness = thickness;
+        }
+
+        // 원 그리기 버튼 클릭
+        public void DrawCircle(object sender, RoutedEventArgs e)
+        {
+            Ellipse ellipse = new Ellipse();
+            ellipse.MouseDown += PressShape;
+            //ellipse.MouseMove += MoveShape;
+            ReadyToDraw(ellipse);
+            ellipse.Fill = Brushes.Transparent;
+            ellipse.Stroke = foreGroundColor;
+            ellipse.StrokeThickness = thickness;
+        }
+
+        // 도형을 그릴 준비를 한다.
         public void ReadyToDraw(object shape)
         {
             Mouse.OverrideCursor = Cursors.Cross;
             if (shape.GetType().ToString().Equals("System.Windows.Shapes.Path"))
                 Mouse.OverrideCursor = Cursors.Pen;
             DrawingObject = shape;
-            //paintCanvas.MouseDown += startDrawEvent;
             mouseDownFlag = true;
         }
 
+        // 그리기 버튼 클릭 후 캔버스 클릭 시 이벤트
         public void StartDraw(object sender, MouseButtonEventArgs e)
         {
             if (mouseDownFlag)
             {
-                Point point = GetCurrentPoint();
+                Point point = paintTool.GetCurrentPoint();
                 priorPoint = point;
                 // 선 그리기
                 if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Line"))
@@ -138,7 +164,8 @@ namespace Painter
                     paintCanvas.Children.Add(ellipse);
                 }
                 mouseUpFlag = true;
-                mouseMoveFlag = true;
+                //mouseMoveFlag = true;
+                paintCanvas.MouseMove += mouseMoveEvent;
             }
             //paintCanvas.MouseUp += mouseUpEvent;
             //paintCanvas.MouseMove += mouseMoveEvent;
@@ -152,142 +179,94 @@ namespace Painter
                 Mouse.OverrideCursor = Cursors.Arrow;
                 //paintCanvas.MouseUp -= mouseUpEvent;
                 //paintCanvas.MouseDown -= startDrawEvent;
-                //paintCanvas.MouseMove -= mouseMoveEvent;
+                paintCanvas.MouseMove -= mouseMoveEvent;
                 mouseUpFlag = false;
                 mouseDownFlag = false;
-                mouseMoveFlag = false;
-                paintedShape.Add(DrawingObject);
+                //paintedShape.Add(DrawingObject);
                 DrawingObject = null;
+                this.WindowState = WindowState.Minimized;
+                this.WindowState = WindowState.Maximized;
             }
         }
 
         public void MoveMouse(object sender, MouseEventArgs e)
         {
-            if (mouseMoveFlag)
+            Point point = paintTool.GetCurrentPoint();
+
+            /* 원래의 타입으로 변환*/
+
+            // 선 그리기
+            if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Line"))
             {
-                Point point = GetCurrentPoint();
-
-                /* 원래의 타입으로 변환*/
-
-                // 선 그리기
-                if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Line"))
-                {
-                    Line line = (Line)DrawingObject;
-                    line.X2 = point.X;
-                    line.Y2 = point.Y;
-                    paintCanvas.Children.Remove(line);
-                    paintCanvas.Children.Add(line);
-                }
-                // 브러쉬로 그리기
-                else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Path"))
-                {
-                    Path brush = (Path)DrawingObject;
-                    PathGeometry geometry = (PathGeometry)brush.Data;
-                    PathFigureCollection figures = geometry.Figures;
-                    PathFigure figure = figures[0];
-                    PathSegmentCollection pathSegments = figure.Segments;
-                    QuadraticBezierSegment quadratic = new QuadraticBezierSegment();
-                    quadratic.Point1 = priorPoint;
-                    quadratic.Point2 = point;
-                    pathSegments.Add(quadratic);
-                    paintCanvas.Children.Remove(brush);
-                    paintCanvas.Children.Add(brush);
-                }
-
-                // 정사각형 그리기
-                else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Rectangle"))
-                {
-                    Rectangle rectangle = (Rectangle)DrawingObject;
-
-                    double width = point.X - startPoint.X;
-                    double height = point.Y - startPoint.Y;
-
-                    if (width < 0)
-                    {
-                        width = Math.Abs(width);
-                        Canvas.SetLeft(rectangle, point.X);
-                    }
-                    if (height < 0)
-                    {
-                        height = Math.Abs(height);
-                        Canvas.SetTop(rectangle, point.Y);
-                    }
-
-                    rectangle.Width = width;
-                    rectangle.Height = height;
-
-                    paintCanvas.Children.Remove(rectangle);
-                    paintCanvas.Children.Add(rectangle);
-                }
-
-                // 원 그리기
-                else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Ellipse"))
-                {
-                    Ellipse ellipse = (Ellipse)DrawingObject;
-
-                    double width = point.X - startPoint.X;
-                    double height = point.Y - startPoint.Y;
-
-                    if (width < 0)
-                    {
-                        width = Math.Abs(width);
-                        Canvas.SetLeft(ellipse, point.X);
-                    }
-                    if (height < 0)
-                    {
-                        height = Math.Abs(height);
-                        Canvas.SetTop(ellipse, point.Y);
-                    }
-
-                    ellipse.Width = width;
-                    ellipse.Height = height;
-
-                    paintCanvas.Children.Remove(ellipse);
-                    paintCanvas.Children.Add(ellipse);
-                }
-                priorPoint = point;
+                Line line = (Line)DrawingObject;
+                line.X2 = point.X;
+                line.Y2 = point.Y;
             }
+            // 브러쉬로 그리기
+            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Path"))
+            {
+                Path brush = (Path)DrawingObject;
+                PathGeometry geometry = (PathGeometry)brush.Data;
+                PathFigureCollection figures = geometry.Figures;
+                PathFigure figure = figures[0];
+                PathSegmentCollection pathSegments = figure.Segments;
+                QuadraticBezierSegment quadratic = new QuadraticBezierSegment();
+                quadratic.Point1 = priorPoint;
+                quadratic.Point2 = point;
+                pathSegments.Add(quadratic);
+            }
+
+            // 정사각형 그리기
+            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Rectangle"))
+            {
+                Rectangle rectangle = (Rectangle)DrawingObject;
+
+                double width = point.X - startPoint.X;
+                double height = point.Y - startPoint.Y;
+
+                if (width < 0)
+                {
+                    width = Math.Abs(width);
+                    Canvas.SetLeft(rectangle, point.X);
+                }
+                if (height < 0)
+                {
+                    height = Math.Abs(height);
+                    Canvas.SetTop(rectangle, point.Y);
+                }
+
+                rectangle.Width = width;
+                rectangle.Height = height;
+            }
+
+            // 원 그리기
+            else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Ellipse"))
+            {
+                Ellipse ellipse = (Ellipse)DrawingObject;
+
+                double width = point.X - startPoint.X;
+                double height = point.Y - startPoint.Y;
+
+                if (width < 0)
+                {
+                    width = Math.Abs(width);
+                    Canvas.SetLeft(ellipse, point.X);
+                }
+                if (height < 0)
+                {
+                    height = Math.Abs(height);
+                    Canvas.SetTop(ellipse, point.Y);
+                }
+
+                ellipse.Width = width;
+                ellipse.Height = height;
+            }
+            priorPoint = point;
+
+            this.Title = "그림판  X : " + priorPoint.X.ToString() + " Y : " + priorPoint.Y.ToString();
         }
+
         
-        public void DrawLine(object sender, RoutedEventArgs e)
-        {
-            Line line = new Line();
-            line.MouseDown += PressLine;
-            ReadyToDraw(line);
-            line.Stroke = foreGroundColor;
-            line.StrokeThickness = thickness;
-        }
-
-        public void DrawBrush(object sender, RoutedEventArgs e)
-        {
-            Path brush = new Path();
-            brush.MouseDown += PressLine;
-            ReadyToDraw(brush);
-            brush.Stroke = foreGroundColor;
-            brush.StrokeThickness = thickness;
-        }
-
-        public void DrawSquare(object sender, RoutedEventArgs e)
-        {
-            Rectangle rectangle = new Rectangle();
-            rectangle.MouseDown += PressShape;
-            rectangle.MouseMove += MoveShape;
-            ReadyToDraw(rectangle);
-            rectangle.Fill = Brushes.Transparent;
-            rectangle.Stroke = foreGroundColor;
-            rectangle.StrokeThickness = thickness;
-        }
-
-        public void DrawCircle(object sender, RoutedEventArgs e)
-        {
-            Ellipse ellipse = new Ellipse();
-            ellipse.MouseDown += PressShape;
-            ellipse.MouseMove += MoveShape;
-            ReadyToDraw(ellipse);
-            ellipse.Fill = Brushes.Transparent;
-            ellipse.Stroke = foreGroundColor;
-            ellipse.StrokeThickness = thickness;
-        }
 
         // Drag정도에 따라 캔버스 크기 조정
         private void Canvas_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
@@ -323,7 +302,7 @@ namespace Painter
             foreGroundColor = colorDict[color];
             foreColor.Background = foreGroundColor;
         }
-        
+
         // 색상 추출
         private void Btn_Pipette_Click(object sender, RoutedEventArgs e)
         {
@@ -345,13 +324,14 @@ namespace Painter
         private void PressShape(object sender, RoutedEventArgs e)
         {
             Shape shape = (Shape)sender;
+
             if (painting)
             {
                 shape.Fill = foreGroundColor;
                 Mouse.OverrideCursor = Cursors.Arrow;
                 painting = false;
             }
-            else if(spoiding)
+            else if (spoiding)
             {
                 foreColor.Background = shape.Fill;
                 foreGroundColor = (SolidColorBrush)foreColor.Background;
@@ -360,27 +340,52 @@ namespace Painter
             }
             else
             {
-                //shape.StrokeDashArray = new DoubleCollection() { 2 };
-                // choiced = true;
-                //priorPoint = GetCurrentPoint();
+                // 어떤 도형이 선택되어 있으면
+                if (choiced != null)
+                {
+                    if(shape==choiced)
+                    {
+                        shape.MouseMove += MoveShape;
+                        shape.MouseUp += FinishMoveShape;
+                        return;
+                    }
+
+                    paintCanvas.Children.Remove(choiced);
+                }
+
+                // 선택 영역 박스 감싸기
+                choiced = paintTool.MakeChoiceBox(shape);
             }
         }
 
+        // 도형을 이동
         public void MoveShape(object sender, MouseEventArgs e)
         {
-            if(choiced)
+            if (choiced != null)
             {
                 Shape shape = (Shape)sender;
-                Point currentPoint = GetCurrentPoint();
+                Point currentPoint = paintTool.GetCurrentPoint();
                 double xPos = Canvas.GetLeft(shape);
                 double yPos = Canvas.GetTop(shape);
                 double deltaX = currentPoint.X - priorPoint.X;
                 double deltaY = currentPoint.Y - priorPoint.Y;
-                //Canvas.SetLeft(shape, xPos - deltaX);
-                //Canvas.SetTop(shape, yPos - deltaY);
+
+                Canvas.SetLeft(shape, xPos - deltaX);
+                Canvas.SetTop(shape, yPos - deltaY);
+                Canvas.SetLeft(choiced, xPos - deltaX - 1);
+                Canvas.SetTop(choiced, yPos - deltaY - 1);
             }
         }
 
+        // 도형을 이동하다가 마우스 버튼을 떼면 발생
+        public void FinishMoveShape(object sender, MouseEventArgs e)
+        {
+            Shape shape = (Shape)sender;
+            shape.MouseMove -= MoveShape;
+            shape.MouseUp -= FinishMoveShape;
+        }
+
+        // 브러쉬, 선을 클릭시 발생
         private void PressLine(object sender, RoutedEventArgs e)
         {
             if (painting)
@@ -392,6 +397,25 @@ namespace Painter
             }
         }
 
+        // 커서 버튼 클릭 이벤트
+        private void Btn_Cursor_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Arrow;
+            mouseDownFlag = false;
+            mouseUpFlag = false;
+            paintCanvas.MouseMove -= mouseMoveEvent;
+            painting = false;
+            choiced = null;
+            spoiding = false;
+        }
+
+        // 새로 만들기 메뉴 버튼 클릭 이벤트
+        private void menu_newfile_Click(object sender, RoutedEventArgs e)
+        {
+            paintCanvas.Children.Clear();
+        }
+
+        // 두께 버튼 클릭 이벤트
         private void Btn_Thickness_Click(object sender, RoutedEventArgs e)
         {
             thickness += 4;

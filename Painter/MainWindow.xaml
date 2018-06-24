@@ -25,7 +25,7 @@
             </Grid.ColumnDefinitions>
             <Menu Background="White" Grid.Column="0">
                <MenuItem Header="  파일" Background="Blue" Foreground="White" Height="25" Width="55">
-                  <MenuItem Name="menu_newfile" Header="새로 만들기" Foreground="Black">
+                  <MenuItem Name="menu_newfile" Header="새로 만들기" Click="menu_newfile_Click" Foreground="Black">
                      <MenuItem.Icon>
                         <Image Source="images/newfile.jpg"/>
                      </MenuItem.Icon>
@@ -187,7 +187,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                      </Grid.ColumnDefinitions>
-                     <Button Name="Btn_Cursor" Grid.Row="0" Grid.Column="0" Background="White" BorderBrush="#E8E9EA">
+                     <Button Name="Btn_Cursor" Grid.Row="0" Grid.Column="0" Background="White" Click="Btn_Cursor_Click" BorderBrush="#E8E9EA">
                         <Image Source="images/cursor.png"/>
                      </Button>
                      <Button Name="Btn_Line" Grid.Row="0" Grid.Column="1" Background="White" Click="DrawLine" BorderBrush="#E8E9EA">
