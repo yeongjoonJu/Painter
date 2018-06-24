@@ -488,22 +488,39 @@ namespace Painter
                 double deltaY = Canvas.GetTop(shape) - point.Y;
 
                 // 도형 크기 변경
-                shape.Width += deltaX;
-                shape.Height += deltaY;
+                if (shape.Width + deltaX < 0)
+                    shape.Width = 0;
+                else
+                    shape.Width += deltaX;
+                if (shape.Height + deltaY < 0)
+                    shape.Height = 0;
+                else
+                    shape.Height += deltaY;
+                
                 Canvas.SetLeft(shape, point.X);
                 Canvas.SetTop(shape, point.Y);
 
                 // 선택 영역 변경
-                choiceBox.Width += deltaX;
-                choiceBox.Height += deltaY;
+                if (choiceBox.Width + deltaX < 0)
+                    choiceBox.Width = 0;
+                else
+                    choiceBox.Width += deltaX;
+                if (choiceBox.Height + deltaY < 0)
+                    choiceBox.Height = 0;
+                else
+                    choiceBox.Height += deltaY;
+
                 Canvas.SetLeft(choiceBox, point.X - 1);
                 Canvas.SetTop(choiceBox, point.Y - 1);
 
                 // 꼭지점 위치 설정
-                Canvas.SetLeft(vertexes[0], point.X - 4);
-                Canvas.SetTop(vertexes[0], point.Y - 4);
-                Canvas.SetTop(vertexes[1], point.Y - 4);
-                Canvas.SetLeft(vertexes[2], point.X - 4);
+                if (!(shape.Width == 0 || shape.Height == 0))
+                {
+                    Canvas.SetLeft(vertexes[0], point.X - 4);
+                    Canvas.SetTop(vertexes[0], point.Y - 4);
+                    Canvas.SetTop(vertexes[1], point.Y - 4);
+                    Canvas.SetLeft(vertexes[2], point.X - 4);
+                }
             }
         }
 
@@ -518,20 +535,39 @@ namespace Painter
                 double deltaY = Canvas.GetTop(shape) - point.Y;
 
                 // 도형 크기 변경
-                shape.Width -= deltaX;
-                shape.Height += deltaY;
+                if (shape.Width - deltaX < 0)
+                    shape.Width = 0;
+                else
+                    shape.Width -= deltaX;
+
+                if (shape.Height + deltaY < 0)
+                    shape.Height = 0;
+                else
+                    shape.Height += deltaY;
+
                 Canvas.SetTop(shape, point.Y);
 
                 // 선택 영역 변경
-                choiceBox.Width -= deltaX;
-                choiceBox.Height += deltaY;
+                if (choiceBox.Width - deltaX < 0)
+                    choiceBox.Width = 0;
+                else
+                    choiceBox.Width -= deltaX;
+
+                if (choiceBox.Height + deltaY < 0)
+                    choiceBox.Height = 0;
+                else
+                    choiceBox.Height += deltaY;
+
                 Canvas.SetTop(choiceBox, point.Y - 1);
 
                 // 꼭지점 위치 설정
-                Canvas.SetTop(vertexes[0], point.Y - 4);
-                Canvas.SetLeft(vertexes[1], point.X - 4);
-                Canvas.SetTop(vertexes[1], point.Y - 4);
-                Canvas.SetLeft(vertexes[3], point.X - 4);
+                if (!(shape.Width == 0 || shape.Height == 0))
+                {
+                    Canvas.SetTop(vertexes[0], point.Y - 4);
+                    Canvas.SetLeft(vertexes[1], point.X - 4);
+                    Canvas.SetTop(vertexes[1], point.Y - 4);
+                    Canvas.SetLeft(vertexes[3], point.X - 4);
+                }
             }
         }
 
@@ -546,20 +582,40 @@ namespace Painter
                 double deltaY = Canvas.GetTop(shape) + shape.Height - point.Y;
 
                 // 도형 크기 변경
-                shape.Width += deltaX;
-                shape.Height -= deltaY;
+                if (shape.Width + deltaX < 0)
+                    shape.Width = 0;
+                else
+                    shape.Width += deltaX;
+
+                if (shape.Height - deltaY < 0)
+                    shape.Height = 0;
+                else
+                    shape.Height -= deltaY;
+
                 Canvas.SetLeft(shape, point.X);
 
                 // 선택 영역 변경
-                choiceBox.Width += deltaX;
-                choiceBox.Height -= deltaY;
+                if (choiceBox.Width + deltaX < 0)
+                    choiceBox.Width = 0;
+                else
+                    choiceBox.Width += deltaX;
+
+                if (choiceBox.Height - deltaY < 0)
+                    choiceBox.Height = 0;
+                else
+                    choiceBox.Height -= deltaY;
+
                 Canvas.SetLeft(choiceBox, point.X - 1);
 
+
                 // 꼭지점 위치 설정
-                Canvas.SetLeft(vertexes[0], point.X - 4);
-                Canvas.SetLeft(vertexes[2], point.X - 4);
-                Canvas.SetTop(vertexes[2], point.Y - 4);
-                Canvas.SetTop(vertexes[3], point.Y - 4);
+                if (!(shape.Width == 0 || shape.Height == 0))
+                {
+                    Canvas.SetLeft(vertexes[0], point.X - 4);
+                    Canvas.SetLeft(vertexes[2], point.X - 4);
+                    Canvas.SetTop(vertexes[2], point.Y - 4);
+                    Canvas.SetTop(vertexes[3], point.Y - 4);
+                }
             }
         }
 
@@ -574,18 +630,35 @@ namespace Painter
                 double deltaY = Canvas.GetTop(shape) + shape.Height - point.Y;
 
                 // 도형 크기 변경
-                shape.Width -= deltaX;
-                shape.Height -= deltaY;
+                if (shape.Width - deltaX < 0)
+                    shape.Width = 0;
+                else
+                    shape.Width -= deltaX;
+
+                if (shape.Height - deltaY < 0)
+                    shape.Height = 0;
+                else
+                    shape.Height -= deltaY;
 
                 // 선택 영역 변경
-                choiceBox.Width -= deltaX;
-                choiceBox.Height -= deltaY;
+                if (choiceBox.Width - deltaX < 0)
+                    choiceBox.Width = 0;
+                else
+                    choiceBox.Width -= deltaX;
+
+                if (choiceBox.Height - deltaY < 0)
+                    choiceBox.Height = 0;
+                else
+                    choiceBox.Height -= deltaY;
 
                 // 꼭지점 위치 설정
-                Canvas.SetLeft(vertexes[1], point.X - 4);
-                Canvas.SetTop(vertexes[2], point.Y - 4);
-                Canvas.SetLeft(vertexes[3], point.X - 4);
-                Canvas.SetTop(vertexes[3], point.Y - 4);
+                if (!(shape.Width == 0 || shape.Height == 0))
+                {
+                    Canvas.SetLeft(vertexes[1], point.X - 4);
+                    Canvas.SetTop(vertexes[2], point.Y - 4);
+                    Canvas.SetLeft(vertexes[3], point.X - 4);
+                    Canvas.SetTop(vertexes[3], point.Y - 4);
+                }
             }
         }
     }
