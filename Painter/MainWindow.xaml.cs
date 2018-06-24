@@ -27,7 +27,6 @@ namespace Painter
         PaintTool paintTool;
         Dictionary<String, SolidColorBrush> colorDict;
         Point priorPoint, startPoint;
-        Thickness margeStartMove;  // 도형 시작 Margin 값
 
         // 두께 설정 상수
         const int THIN = 2;
@@ -39,10 +38,10 @@ namespace Painter
         bool mouseDownFlag = false;
         bool mouseUpFlag = false;
         // bool mouseMoveFlag = false;
-        bool dragMove = false;
         bool painting = false;
         bool spoiding = false;
         bool erasing = false;
+        bool drawing = false;
 
         // 선택 박스, 점
         Shape choiceBox = null;
@@ -129,14 +128,7 @@ namespace Painter
         {
             if (mouseDownFlag)
             {
-                // 객체가 선택되면
-                if (paintCanvas.Children.Contains((UIElement)DrawingObject))
-                {
-                    mouseUpFlag = true;
-                    FinishDraw(sender, e);
-                    return;
-                }
-                    
+                drawing = true;    
                 Point point = paintTool.GetCurrentPoint();
                 priorPoint = point;
                 // 선 그리기
@@ -200,6 +192,7 @@ namespace Painter
                 mouseDownFlag = false;
                 //paintedShape.Add(DrawingObject);
                 DrawingObject = null;
+                drawing = false;
 
                 this.WindowState = WindowState.Minimized;
                 this.WindowState = WindowState.Maximized;
@@ -321,6 +314,9 @@ namespace Painter
         private void PressShape(object sender, MouseEventArgs e)
         {
             Shape shape = (Shape)sender;
+
+            if (drawing)
+                return;
 
             if (painting)
             {
@@ -455,6 +451,9 @@ namespace Painter
 
                 double deltaX = priorPoint.X - point.X;
                 double deltaY = priorPoint.Y - point.Y;
+
+                if (shape == null)
+                    return;
 
                 // 도형 위치 변경
                 Canvas.SetLeft(shape, Canvas.GetLeft(shape) - deltaX);
