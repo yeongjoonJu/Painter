@@ -21,7 +21,6 @@ namespace Painter
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<object> paintedShape;
         SolidColorBrush foreGroundColor;
         SolidColorBrush backGroundColor;
         PaintTool paintTool;
@@ -55,7 +54,6 @@ namespace Painter
         public MainWindow()
         {
             InitializeComponent();
-            paintedShape = new List<object>();
             foreGroundColor = Brushes.Black;
             backGroundColor = Brushes.White;
             paintCanvas.MouseDown += new MouseButtonEventHandler(StartDraw);
@@ -126,6 +124,11 @@ namespace Painter
         // 그리기 버튼 클릭 후 캔버스 클릭 시 이벤트
         public void StartDraw(object sender, MouseButtonEventArgs e)
         {
+            if (paintCanvas.Children.Contains((UIElement)DrawingObject)) {
+                FinishDraw(sender, e);
+                return;
+            }
+               
             if (mouseDownFlag)
             {
                 drawing = true;    
@@ -155,6 +158,7 @@ namespace Painter
                     brush.Data = geometry;
                     paintCanvas.Children.Add(brush);
                 }
+                // 사각형 그리기
                 else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Rectangle"))
                 {
                     Rectangle rectangle = (Rectangle)DrawingObject;
@@ -163,6 +167,7 @@ namespace Painter
                     startPoint = point;
                     paintCanvas.Children.Add(rectangle);
                 }
+                // 원 그리기
                 else if (DrawingObject.GetType().ToString().Equals("System.Windows.Shapes.Ellipse"))
                 {
                     Ellipse ellipse = (Ellipse)DrawingObject;
@@ -334,7 +339,17 @@ namespace Painter
             else if (erasing)
             {
                 paintCanvas.Children.Remove(shape);
+                if(vertexes != null)
+                {
+                    for (int i = 0; i < vertexes.Length; i++)
+                        paintCanvas.Children.Remove(vertexes[i]);
+                    vertexes = null;
+                }
+                if (choiceBox != null)
+                    paintCanvas.Children.Remove(choiceBox);
+                choiceBox = null;
                 erasing = false;
+                
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
             else
@@ -372,6 +387,8 @@ namespace Painter
         private void PressLine(object sender, RoutedEventArgs e)
         {
             Shape shape = (Shape)sender;
+            if (drawing)
+                return;
             if (painting)
             {
                 shape.Stroke = foreGroundColor;
@@ -426,6 +443,7 @@ namespace Painter
             if (thickness > MORE_THICK)
                 thickness = THIN;
 
+            // 선택된 두께에 따라 버튼 이미지 변경
             switch (thickness)
             {
                 case THIN:
@@ -443,6 +461,8 @@ namespace Painter
         // 도형을 이동
         public void MoveShape(object sender, MouseEventArgs e)
         {
+            if (drawing)
+                return;
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 Point point = e.GetPosition(paintCanvas);
@@ -477,6 +497,7 @@ namespace Painter
             priorPoint = e.GetPosition(paintCanvas);
         }
 
+        // 왼쪽 위 꼭지점을 클릭 후 크기 조절 시 발생
         private void LeftTopVertex_Click(object sender, MouseEventArgs e)
         {
             if(e.LeftButton == MouseButtonState.Pressed)
@@ -524,6 +545,7 @@ namespace Painter
             }
         }
 
+        // 오른쪽 위 꼭지점을 클릭 후 크기 조절 시 발생
         private void RightTopVertex_Click(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -571,6 +593,7 @@ namespace Painter
             }
         }
 
+        // 왼쪽 아래 꼭지점을 클릭 후 크기 조절 시 발생
         private void LeftBottomVertex_Click(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -619,6 +642,7 @@ namespace Painter
             }
         }
 
+        // 오른쪽 아래 꼭지점을 클릭 후 크기 조절 시 발생
         private void RightBottomVertex_Click(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
